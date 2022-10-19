@@ -1,0 +1,40 @@
+[
+  {
+    "_id": "903473a0-33f5-4475-a6e1-ef502755938f",
+    "colId": "d68e52f3-09de-4dac-be7e-b42c87251be8",
+    "containerId": "",
+    "name": "New Account",
+    "url": "127.0.0.1:8000/api/accounts/new",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-10-19T00:56:39.772Z",
+    "modified": "2022-10-19T00:57:17.208Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"email\": \"liam@ufl.edu\",\n    \"username\": \"liam\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "955876db-ad25-453d-b039-8c89a49daeb9",
+    "colId": "d68e52f3-09de-4dac-be7e-b42c87251be8",
+    "containerId": "",
+    "name": "Login",
+    "url": "127.0.0.1:8000/api/accounts/login",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2022-10-19T00:59:21.162Z",
+    "modified": "2022-10-19T04:27:00.674Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"email\": \"liam@ufl.edu\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": []
+  }
+]

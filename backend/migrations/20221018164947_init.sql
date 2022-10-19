@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS account(
+    id        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, 
+    email     TEXT NOT NULL UNIQUE,
+    username  TEXT NOT NULL,
+    pw_hash   TEXT NOT NULL,
+    disabled  BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS report(
+    id          INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    x           DECIMAL NOT NULL,
+    y           DECIMAL NOT NULL,
+    created_by  INT NOT NULL REFERENCES account(id),
+    created_at  TIMESTAMPTZ NOT NULL,
+    last_seen   TIMESTAMPTZ NOT NULL
+);

@@ -14,5 +14,8 @@
     },
     "[typescript]": {
         "editor.tabSize": 2
+    },
+    "[sql]": {
+        "editor.formatOnSave": false
     }
 }
