@@ -18,6 +18,8 @@ jobs:
       - name: Build
         run: cargo build --verbose
         working-directory: ./backend
+        env:
+          SQLX_OFFLINE: true
       - name: Run tests
         run: cargo test --verbose
         working-directory: ./backend

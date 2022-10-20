@@ -19,7 +19,7 @@ argon2 = "0.4"
 rand = "0.8"
 
 # database
-sqlx = { version = "0.6", default-features = false, features = ["runtime-tokio-rustls", "postgres", "macros", "migrate"] }
+sqlx = { version = "0.6", default-features = false, features = ["runtime-tokio-rustls", "postgres", "macros", "migrate", "offline"] }
 
 # utility
 dotenv = "0.15"

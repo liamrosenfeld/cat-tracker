@@ -1,0 +1,45 @@
+{
+  "db": "PostgreSQL",
+  "5ee342b95b9fcbf783168f4565b6165fda1978948e1ef2e8cbb22524834dd51f": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "insert into \"account\" (username, email, pw_hash) values ($1, $2, $3) returning id"
+  },
+  "e998fb794d1e780ad2986624bbffabb36e1b15fdf3a28b11856ead06dc523d44": {
+    "describe": {
+      "columns": [
+        {
+          "name": "pw_hash",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      }
+    },
+    "query": "select pw_hash from account where email = $1"
+  }
+}
