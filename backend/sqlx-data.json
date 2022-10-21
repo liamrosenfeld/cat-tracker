@@ -22,16 +22,22 @@
     },
     "query": "insert into \"account\" (username, email, pw_hash) values ($1, $2, $3) returning id"
   },
-  "e998fb794d1e780ad2986624bbffabb36e1b15fdf3a28b11856ead06dc523d44": {
+  "f1caea199e1d6e2f7c94891362e2af1d80522dab2a0608eeb09e96f4570c9185": {
     "describe": {
       "columns": [
         {
-          "name": "pw_hash",
+          "name": "id",
           "ordinal": 0,
+          "type_info": "Int4"
+        },
+        {
+          "name": "pw_hash",
+          "ordinal": 1,
           "type_info": "Text"
         }
       ],
       "nullable": [
+        false,
         false
       ],
       "parameters": {
@@ -40,6 +46,6 @@
         ]
       }
     },
-    "query": "select pw_hash from account where email = $1"
+    "query": "select id, pw_hash from account where email = $1"
   }
 }

@@ -5,6 +5,7 @@ use argon2::{
 use axum::{extract::State, routing::post, Json, Router};
 use sqlx::PgPool;
 
+use crate::auth::AuthBody;
 use crate::errors::Error;
 
 pub fn routes() -> Router<PgPool> {
@@ -22,7 +23,10 @@ struct NewAccount {
     password: String,
 }
 
-async fn new(State(db): State<PgPool>, Json(req): Json<NewAccount>) -> Result<String, Error> {
+async fn new(
+    State(db): State<PgPool>,
+    Json(req): Json<NewAccount>,
+) -> Result<Json<AuthBody>, Error> {
     let pw_hash = hash_password(req.password).await?;
 
     let user_id = sqlx::query_scalar!(
@@ -34,7 +38,7 @@ async fn new(State(db): State<PgPool>, Json(req): Json<NewAccount>) -> Result<St
     .fetch_one(&db)
     .await?;
 
-    Ok(user_id.to_string())
+    Ok(Json(AuthBody::for_id(user_id)?))
 }
 
 /* ---------------------------------- login --------------------------------- */
@@ -45,14 +49,16 @@ struct Login {
     password: String,
 }
 
-async fn login(State(db): State<PgPool>, Json(req): Json<Login>) -> Result<String, Error> {
-    let hash = sqlx::query!("select pw_hash from account where email = $1", req.email)
-        .fetch_one(&db)
-        .await?
-        .pw_hash;
-    verify_password(req.password, hash).await?;
+async fn login(State(db): State<PgPool>, Json(req): Json<Login>) -> Result<Json<AuthBody>, Error> {
+    let user = sqlx::query!(
+        "select id, pw_hash from account where email = $1",
+        req.email
+    )
+    .fetch_one(&db)
+    .await?;
+    verify_password(req.password, user.pw_hash).await?;
 
-    Ok("Welcome".to_string())
+    Ok(Json(AuthBody::for_id(user.id)?))
 }
 
 /* --------------------------------- hashing -------------------------------- */

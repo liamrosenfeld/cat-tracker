@@ -8,13 +8,17 @@
     "method": "POST",
     "sortNum": 10000,
     "created": "2022-10-19T00:56:39.772Z",
-    "modified": "2022-10-19T00:57:17.208Z",
+    "modified": "2022-10-21T01:25:49.080Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
       "raw": "{\n    \"email\": \"liam@ufl.edu\",\n    \"username\": \"liam\",\n    \"password\": \"password\"\n}",
       "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NjgxMjk4MzJ9.wYXUrgoG0W6FfqDeuXoAm--QRXLRyIiJfDOhJv1rJ7Y"
     },
     "tests": []
   },
@@ -35,6 +39,34 @@
       "raw": "{\n    \"email\": \"liam@ufl.edu\",\n    \"password\": \"password\"\n}",
       "form": []
     },
+    "tests": []
+  },
+  {
+    "_id": "084aeb4d-c36d-4968-b419-20db9506c5a1",
+    "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
+    "containerId": "",
+    "name": "New Report",
+    "url": "127.0.0.1:8000/api/reports/new",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-10-21T01:24:18.234Z",
+    "modified": "2022-10-21T01:40:07.901Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "90508c67-19c3-4e02-9777-b432f45b152b",
+    "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
+    "containerId": "",
+    "name": "List Reports",
+    "url": "127.0.0.1:8000/api/reports/list",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-10-21T01:24:29.625Z",
+    "modified": "2022-10-21T01:25:04.588Z",
+    "headers": [],
+    "params": [],
     "tests": []
   }
 ]

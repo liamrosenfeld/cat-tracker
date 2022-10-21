@@ -26,6 +26,10 @@ pub enum Error {
     #[error("error in the request body: {0}")]
     UnprocessableEntity(&'static str),
 
+    /// Return `400 Bad Request`
+    #[error("{0}")]
+    BadRequest(&'static str),
+
     #[error("{0}")]
     Internal(String),
 
@@ -42,6 +46,7 @@ impl Error {
             Self::NotFound { .. } => StatusCode::NOT_FOUND,
             Self::UnprocessableEntity(_) => StatusCode::UNPROCESSABLE_ENTITY,
             Self::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::BadRequest(_) => StatusCode::BAD_REQUEST,
             Self::Sqlx(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }

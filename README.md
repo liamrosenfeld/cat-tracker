@@ -13,7 +13,9 @@ A web application to crowd-source the location of UF campus cats so more people 
 
 ### Backend
 
-First run `npm run build` in the `frontend` directory. Then run `cargo run` in `backend`.
+1. Create the `.env` file in `backend/` with the `DATABASE_URL` and the `JWT_SECRET` generated with `openssl rand -base64 32`
+2. Run `npm run build` in the `frontend` directory
+3. Run `cargo run` in the `backend` backend
 
 ### Database
 
