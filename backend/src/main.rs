@@ -23,15 +23,26 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    // migrate database
+    sqlx::migrate!("./migrations")
+        .run(&db::connect().await)
+        .await
+        .expect("Could not run server migrations");
+
     // routing
     let app = Router::new()
         .nest("/api", routes::routes().await)
         .fallback_service(frontend::service())
         .layer(TraceLayer::new_for_http());
 
-    // run it
+    // get address dependant on if running locally or in docker
+    #[cfg(debug_assertions)]
     let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
-    println!("listening on {}", addr);
+    #[cfg(not(debug_assertions))]
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+
+    // run it
+    println!("listening on {}", &addr);
     Server::bind(&addr)
         .serve(app.into_make_service())
         .await

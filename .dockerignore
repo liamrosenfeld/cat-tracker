@@ -1,0 +1,9 @@
+backend/target
+backend/.env
+frontend/build
+frontend/node_modules
+.git
+.vscode
+.github
+thunder-tests
+README.md

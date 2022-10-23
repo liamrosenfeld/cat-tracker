@@ -1,0 +1,23 @@
+version: "3"
+services:
+  web:
+    image: cat-tracker
+    build: .
+    environment:
+      DATABASE_URL: postgres://docker:docker@db:5432/cat-tracker
+      SQLX_OFFLINE: true
+      RUST_LOG: backend=info,tower_http=error
+      JWT_SECRET: "${JWT_SECRET}"
+      GOOGLE_MAP_KEY: "${GOOGLE_MAP_KEY}"
+    ports:
+      - 8000:8000
+    links:
+      - db
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: cat-tracker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_USER: docker

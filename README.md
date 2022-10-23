@@ -25,10 +25,13 @@ A web application to crowd-source the location of UF campus cats so more people 
 1. [Install Postgres](https://www.postgresql.org/download/) then start with `pg_ctl -D /usr/local/var/postgresql@14 start`
 2. Install SQLx CLI `cargo install sqlx-cli`
 3. Add `DATABASE_URL` to `.env`
+4. Create database `sqlx database create`
 
 ## Docker Development
 
-TODO
+1. [Install Docker](https://docs.docker.com/get-docker/)
+2. Create `.env` with everything except `DATABASE_URL`
+3. Run: `docker compose up`
 
 ## Environment Variables
 
@@ -43,6 +46,9 @@ TODO
 - `GOOGLE_MAP_KEY`
   - Key used to connect to google maps api
   - Get it from Chung
+- `RUST_LOG` (optional)
+  - How much you want the backend to log
+  - `backend=LEVEL,tower_http=LEVEL`
 
 ### Location
 
@@ -54,3 +60,5 @@ TODO
 
 - After Changing a `query!`: `cargo sqlx prepare`
 - New Migration: `sqlx migrate add <name>`
+
+Migrations are automatically applied to the database when the backend is run
