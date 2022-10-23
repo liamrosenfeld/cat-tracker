@@ -4,7 +4,6 @@
   LINK TO DOCUMENTATION
   https://react-google-maps-api-docs.netlify.app/#googlemap
 */
-import React from 'react';
 import mapStylesheet from './mapStylesheet';
 
 // functions
