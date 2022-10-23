@@ -1,48 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { mapContainerStyle, center, zoom, options } from './settings';
 
-const Map: React.FC = () => 
-{
-  // map reference variable
-  const mapRef = React.useRef<google.maps.Map | null>(null);
+const Map: React.FC = () => {
+  // get api key
+  const [key, setKey] = useState<string>();
+  useEffect(() => {
+    async function getKey() {
+      const response = await fetch('/api/keys/map');
+      const key = await response.text();
+      setKey(key);
+    }
 
-  // save the map to the reference
-  const onLoad = (map: google.maps.Map): void => 
-  {
-    mapRef.current = map;
-  }
+    getKey();
+  }, []);
 
-  // detach the map from the reference
-  const onUnmount = (): void => 
-  {
-    mapRef.current = null;
-  }
+  return key !== undefined ? <MapChild apiKey={key} /> : <div> Map Loading...</div>
+};
 
+const MapChild: React.FC<{ apiKey: string }> = (props) => {
   // load the map
-  const { isLoaded } = useJsApiLoader
-  ({
-    id: 'google-map-ide',
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY! // set the key
-  })
+  const { isLoaded, loadError } = useJsApiLoader
+    ({
+      id: 'google-map-ide',
+      googleMapsApiKey: props.apiKey
+    });
 
-  if (!isLoaded) // map not loaded
-  {
-    return <div> Map Loading...</div>
-  }
-  else // map loaded
-  {
+  const renderMap = () => {
+    const onLoad = (_map: google.maps.Map): void => {
+      console.log("map loaded")
+    }
+
     return (
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          options={options as google.maps.MapOptions}
-          center={center}
-          zoom={zoom}
-          onLoad={onLoad}
-          onUnmount={onUnmount}
-        />
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        options={options as google.maps.MapOptions}
+        center={center}
+        zoom={zoom}
+        onLoad={onLoad}
+      >
+        {/* we can add the overlay here (just make sure to cache the components) */}
+      </GoogleMap>
     );
   }
-};
+
+  if (loadError) {
+    return <div>Map cannot be loaded right now, sorry.</div>
+  }
+
+  return isLoaded ? renderMap() : <div> Map Loading...</div>
+}
 
 export default Map;

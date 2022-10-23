@@ -3,6 +3,7 @@ use axum::Router;
 use sqlx::PgPool;
 
 mod accounts;
+mod keys;
 mod reports;
 
 pub async fn routes() -> Router<PgPool> {
@@ -10,4 +11,5 @@ pub async fn routes() -> Router<PgPool> {
     Router::with_state(db::connect().await)
         .merge(accounts::routes())
         .merge(reports::routes())
+        .merge(keys::routes())
 }

@@ -8,12 +8,15 @@ A web application to crowd-source the location of UF campus cats so more people 
 
 (all must be run in the `frontend` directory)
 
-- Build once: `npm run build`
-- Build, keep updating, and open in browser: `npm start`
+1. `npm install`
+2. Build
+   - Production: `npm run build`
+   - Development: `npm start`
+     - Note: will not connect to backend
 
 ### Backend
 
-1. Create the `.env` file in `backend/` with the `DATABASE_URL` and the `JWT_SECRET` generated with `openssl rand -base64 32`
+1. Create the `.env` file in `backend/`
 2. Run `npm run build` in the `frontend` directory
 3. Run `cargo run` in the `backend` backend
 
@@ -21,11 +24,31 @@ A web application to crowd-source the location of UF campus cats so more people 
 
 1. [Install Postgres](https://www.postgresql.org/download/) then start with `pg_ctl -D /usr/local/var/postgresql@14 start`
 2. Install SQLx CLI `cargo install sqlx-cli`
-3. Create a `.env` file in `backend/` that has the contents `DATABASE_URL=postgres://[YOUR USERNAME]:[YOUR PASSWORD]@localhost/cat-tracker`
+3. Add `DATABASE_URL` to `.env`
 
 ## Docker Development
 
 TODO
+
+## Environment Variables
+
+### Values
+
+- `DATABASE_URL`
+  - URL to the postgres database
+  - in the form `postgres://USERNAME:PASSWORD@localhost/cat-tracker`
+- `JWT_SECRET`
+  - The key used for auth
+  - Generate with `openssl rand -base64 32`
+- `GOOGLE_MAP_KEY`
+  - Key used to connect to google maps api
+  - Get it from Chung
+
+### Location
+
+- Local: `/backend/.env`
+- Docker: `/.env`
+- Deployment: Managed by heroku
 
 ## Database Commands
 

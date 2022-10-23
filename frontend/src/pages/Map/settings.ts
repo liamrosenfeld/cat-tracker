@@ -10,14 +10,14 @@ import mapStylesheet from './mapStylesheet';
 
 // variables
 
-export const mapContainerStyle = 
+export const mapContainerStyle =
 {
   width: '100%',
   height: '100vh'
 };
 
 // GNV coordinates
-export const center = 
+export const center =
 {
   lat: 29.645,
   lng: -82.35
@@ -27,7 +27,7 @@ export const center =
 export const zoom = 15;
 
 // Extra Options
-export const options = 
+export const options =
 {
   styles: mapStylesheet,
   disableDefaultUI: true,
