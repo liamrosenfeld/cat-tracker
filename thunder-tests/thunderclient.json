@@ -50,23 +50,111 @@
     "method": "POST",
     "sortNum": 10000,
     "created": "2022-10-21T01:24:18.234Z",
-    "modified": "2022-10-23T22:36:34.996Z",
+    "modified": "2022-11-06T22:29:24.693Z",
     "headers": [],
     "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"loc_x\": 29.64768457131988,\n  \"loc_y\": -82.350184950971,\n  \"cat_name\": \"tenders\",\n  \"notes\": \"outside gator corner front door\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2Njk1ODgxMzh9.6QM3hX9qsZxzlmsfjPhN0WGp3h6MDO4ROIk_5wkT-34"
+    },
     "tests": []
   },
   {
     "_id": "90508c67-19c3-4e02-9777-b432f45b152b",
     "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
     "containerId": "",
-    "name": "List Reports",
-    "url": "localhost:8000/api/reports/list",
+    "name": "Recent Reports",
+    "url": "localhost:8000/api/reports/recent?hours_back=1",
     "method": "GET",
     "sortNum": 20000,
     "created": "2022-10-21T01:24:29.625Z",
-    "modified": "2022-10-23T22:22:39.006Z",
+    "modified": "2022-11-06T22:29:34.906Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "hours_back",
+        "value": "1",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "e3d1019d-b92c-4f0c-b560-10f3b34eaddc",
+    "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
+    "containerId": "",
+    "name": "Get By ID",
+    "url": "localhost:8000/api/reports/1",
+    "method": "GET",
+    "sortNum": 30000,
+    "created": "2022-11-06T21:55:09.520Z",
+    "modified": "2022-11-06T22:33:28.134Z",
     "headers": [],
     "params": [],
+    "tests": []
+  },
+  {
+    "_id": "e41d960c-472a-4a21-b64e-1aba2b47c29b",
+    "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
+    "containerId": "",
+    "name": "Update",
+    "url": "localhost:8000/api/reports/1",
+    "method": "PUT",
+    "sortNum": 40000,
+    "created": "2022-11-06T21:55:18.349Z",
+    "modified": "2022-11-06T22:34:23.576Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"loc_x\": 29.64768457131988,\n  \"loc_y\": -82.350184950971,\n  \"cat_name\": \"updated tenders\",\n  \"notes\": \"outside gator corner front door\"\n}",
+      "form": []
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2Njk1ODgxMzh9.6QM3hX9qsZxzlmsfjPhN0WGp3h6MDO4ROIk_5wkT-34"
+    },
+    "tests": []
+  },
+  {
+    "_id": "4857f29d-0bb6-400a-9065-7f47c3788e8e",
+    "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
+    "containerId": "",
+    "name": "Spot",
+    "url": "localhost:8000/api/reports/1/spot",
+    "method": "POST",
+    "sortNum": 50000,
+    "created": "2022-11-06T21:55:34.653Z",
+    "modified": "2022-11-06T22:43:39.808Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2Njk1ODgxMzh9.6QM3hX9qsZxzlmsfjPhN0WGp3h6MDO4ROIk_5wkT-34"
+    },
+    "tests": []
+  },
+  {
+    "_id": "1830c6fc-c134-4c59-a682-61bdd9de2371",
+    "colId": "18c49855-e9d4-4ffc-8160-349e8b9c1ada",
+    "containerId": "",
+    "name": "Delete",
+    "url": "localhost:8000/api/reports/1",
+    "method": "DELETE",
+    "sortNum": 60000,
+    "created": "2022-11-06T22:39:42.932Z",
+    "modified": "2022-11-06T22:45:10.960Z",
+    "headers": [],
+    "params": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2Njk1ODgxMzh9.6QM3hX9qsZxzlmsfjPhN0WGp3h6MDO4ROIk_5wkT-34"
+    },
     "tests": []
   }
 ]

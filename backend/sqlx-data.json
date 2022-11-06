@@ -1,28 +1,6 @@
 {
   "db": "PostgreSQL",
-  "5ee342b95b9fcbf783168f4565b6165fda1978948e1ef2e8cbb22524834dd51f": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int4"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Text",
-          "Text",
-          "Text"
-        ]
-      }
-    },
-    "query": "insert into \"account\" (username, email, pw_hash) values ($1, $2, $3) returning id"
-  },
-  "f1caea199e1d6e2f7c94891362e2af1d80522dab2a0608eeb09e96f4570c9185": {
+  "471f473bc721e5c1272d8c74067e269fb7dfecbb5a9b87b723cd5372bf5a84c6": {
     "describe": {
       "columns": [
         {
@@ -46,6 +24,217 @@
         ]
       }
     },
-    "query": "select id, pw_hash from account where email = $1"
+    "query": "SELECT id, pw_hash FROM account WHERE email = $1"
+  },
+  "4e35487533dde132f9e614f28a08bdccb78bb2d9129dd2eb7079b8a74148f0d9": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Float8",
+          "Float8",
+          "Int4",
+          "Timestamptz",
+          "Timestamptz",
+          "Varchar",
+          "Varchar"
+        ]
+      }
+    },
+    "query": "INSERT INTO report (loc_x, loc_y, created_by, created_at, last_seen, cat_name, notes)\n        VALUES ($1, $2, $3, $4, $5, $6, $7)\n        RETURNING id"
+  },
+  "8792c3f5d63514c9523d32c0f9edef8257e216878e2fb6b095c49b0c0ae00698": {
+    "describe": {
+      "columns": [
+        {
+          "name": "created_by",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "SELECT created_by FROM report WHERE id = $1"
+  },
+  "8e486630bd4afb3d1471abdec562622ee0de81a616249aa0510f8cacf2184ba2": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Float8",
+          "Float8",
+          "Varchar",
+          "Varchar",
+          "Int4"
+        ]
+      }
+    },
+    "query": "UPDATE report SET loc_x=$1, loc_y=$2, cat_name=$3, notes=$4 WHERE id = $5"
+  },
+  "9c750fae543d01f2893e7fa363cc433a176dc5ba3e0c85d42a178cda9df09052": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Timestamptz",
+          "Int4"
+        ]
+      }
+    },
+    "query": "UPDATE report SET last_seen=$1 WHERE id = $2 RETURNING id"
+  },
+  "a9575ebd0f0f29b5c8405e84cf906845e3e7a6ba717d174a9eb3dddddb478023": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "INSERT INTO account (username, email, pw_hash)\n        VALUES ($1, $2, $3) RETURNING id"
+  },
+  "b6fe8ade4b76a680ffcaae592c23a0dbb76986a898312d69fd6c6773a658f878": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        },
+        {
+          "name": "loc_x",
+          "ordinal": 1,
+          "type_info": "Float8"
+        },
+        {
+          "name": "loc_y",
+          "ordinal": 2,
+          "type_info": "Float8"
+        },
+        {
+          "name": "created_by",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "last_seen",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "cat_name",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "notes",
+          "ordinal": 7,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "SELECT report.id, loc_x, loc_y, username created_by, created_at, last_seen, cat_name, notes\n        FROM report JOIN account ON report.created_by=account.id\n        WHERE report.id = $1"
+  },
+  "cca0c76adac4dec9bc6cca864c615c201a33856557b0d774fba7a7260ff5ade6": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "DELETE FROM report WHERE id = $1"
+  },
+  "ecb5c37bceb51c94b5cbfd35e38f956143fef5ad638b2360b147236f7561f16e": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        },
+        {
+          "name": "loc_x",
+          "ordinal": 1,
+          "type_info": "Float8"
+        },
+        {
+          "name": "loc_y",
+          "ordinal": 2,
+          "type_info": "Float8"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Timestamptz"
+        ]
+      }
+    },
+    "query": "SELECT id, loc_x, loc_y FROM report WHERE last_seen >= $1"
   }
 }
