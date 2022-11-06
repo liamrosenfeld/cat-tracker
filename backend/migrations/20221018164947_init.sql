@@ -8,9 +8,11 @@ CREATE TABLE IF NOT EXISTS account(
 
 CREATE TABLE IF NOT EXISTS report(
     id          INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    x           DECIMAL NOT NULL,
-    y           DECIMAL NOT NULL,
+    loc_x       FLOAT NOT NULL,
+    loc_y       FLOAT NOT NULL,
     created_by  INT NOT NULL REFERENCES account(id),
     created_at  TIMESTAMPTZ NOT NULL,
-    last_seen   TIMESTAMPTZ NOT NULL
+    last_seen   TIMESTAMPTZ NOT NULL,
+    cat_name    VARCHAR NOT NULL,
+    notes       VARCHAR NOT NULL
 );

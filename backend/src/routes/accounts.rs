@@ -30,7 +30,8 @@ async fn new(
     let pw_hash = hash_password(req.password).await?;
 
     let user_id = sqlx::query_scalar!(
-        r#"insert into "account" (username, email, pw_hash) values ($1, $2, $3) returning id"#,
+        r#"INSERT INTO account (username, email, pw_hash)
+        VALUES ($1, $2, $3) RETURNING id"#,
         req.username,
         req.email,
         pw_hash
@@ -51,7 +52,7 @@ struct Login {
 
 async fn login(State(db): State<PgPool>, Json(req): Json<Login>) -> Result<Json<AuthBody>, Error> {
     let user = sqlx::query!(
-        "select id, pw_hash from account where email = $1",
+        "SELECT id, pw_hash FROM account WHERE email = $1",
         req.email
     )
     .fetch_one(&db)
