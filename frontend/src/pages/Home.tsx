@@ -15,7 +15,8 @@ class Home extends React.Component<{}, { test: string }> {
           <img src="/images/logo.svg" className="App-logo" alt="logo" />
           <p>This is the home page</p>
         </header>
-        <Link to="/other">Other</Link>
+        <Link className="App-link" to="/other">Other </Link>
+        <Link className="App-link" to="/map">Map</Link>
         <button onClick={this.testAPI}>Test API</button>
         <p>API Returned: {this.state.test}</p>
       </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { mapContainerStyle, center, zoom, options } from './settings';
+import MapHeader from './MapHeader';
 
 const Map: React.FC = () => {
   // get api key
@@ -15,7 +16,7 @@ const Map: React.FC = () => {
     getKey();
   }, []);
 
-  return key !== undefined ? <MapChild apiKey={key} /> : <div> Map Loading...</div>
+  return key !== undefined ? <div><MapHeader /><MapChild apiKey={key} /></div> : <div> Map Loading...</div>
 };
 
 const MapChild: React.FC<{ apiKey: string }> = (props) => {
