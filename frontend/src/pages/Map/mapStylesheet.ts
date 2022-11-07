@@ -1,6 +1,6 @@
 
 /*
-  JSON stylesheet for the goole map
+  JSON stylesheet for the google map
 
   LINK TO DOCUMENTATION
   https://developers.google.com/maps/documentation/javascript/style-reference
