@@ -2,10 +2,6 @@ import React from "react";
 import "./MapHeader.css";
 
 class MapHeader extends React.Component<{}, {}> {
-  constructor(props: any) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="Map">
