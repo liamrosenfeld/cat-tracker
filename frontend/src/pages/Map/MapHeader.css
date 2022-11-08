@@ -1,0 +1,50 @@
+.Map {
+  text-align: center;
+}
+
+.Map-logo {
+  height: 3rem;
+  pointer-events: none;
+}
+
+.Map-header {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  font-size: calc(10px + 2vmin);
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+
+.Map-header-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.Map-header-title {
+  padding: 0.5rem;
+  margin: 0.5rem;
+}
+
+.Map-button {
+  background-color: #717ef4;
+  border: none;
+  color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: calc(5px + 2vmin);
+  font-weight: bold;
+}
+
+.Account-button {
+  background-color: #d9d9d9;
+  border: none;
+  border-radius: 50%;
+}
+
+.Account-button.image {
+  height: 3rem;
+}

@@ -24,6 +24,8 @@
 }
 
 .App-link {
+  margin-left: 50px;
+  margin-right: 50px;
   color: #61dafb;
 }
 
@@ -31,6 +33,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
