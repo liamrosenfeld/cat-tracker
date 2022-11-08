@@ -1,5 +1,4 @@
 import { MarkerF } from '@react-google-maps/api';
-import ReportMarkerIcon from './images/map-pin.svg';
 
 /*
 NOTE:
@@ -26,7 +25,7 @@ const ReportMarker: React.FC<{ ReportMarkerStruct: ReportMarkerType; }> = props 
     position={ props.ReportMarkerStruct.location }
     onClick={ () => onClickReportMarker( props.ReportMarkerStruct ) }
     icon={ {
-      url: ReportMarkerIcon,
+      url: '/images/logo.svg',
       origin: new window.google.maps.Point( 0, 0 ),
       anchor: new window.google.maps.Point( 15, 15 ),
       scaledSize: new window.google.maps.Size( 30, 30 )
