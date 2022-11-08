@@ -1,6 +1,14 @@
 import { MarkerF } from '@react-google-maps/api';
 import ReportMarkerIcon from './images/map-pin.svg';
 
+/*
+NOTE:
+  https://github.com/JustFly1984/react-google-maps-api/issues/3019
+  https://github.com/JustFly1984/react-google-maps-api/issues/3048#issuecomment-1166410403
+  https://github.com/JustFly1984/react-google-maps-api/issues/2978
+  https://codesandbox.io/s/react-google-maps-api-forked-8uvb39?file=%2Fsrc%2Findex.js
+*/
+
 // a struct representing required marker values
 export type ReportMarkerType = {
   id: string;
