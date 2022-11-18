@@ -9,9 +9,9 @@ use crate::auth::AuthBody;
 use crate::errors::Error;
 
 pub fn routes() -> Router<PgPool> {
-    Router::inherit_state()
-        .route("/accounts/new", post(new))
-        .route("/accounts/login", post(login))
+    Router::new()
+        .route("/new", post(new))
+        .route("/login", post(login))
 }
 
 /* ----------------------------------- new ---------------------------------- */

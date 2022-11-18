@@ -2,7 +2,7 @@ use axum::{routing::get, Router};
 use sqlx::PgPool;
 
 pub fn routes() -> Router<PgPool> {
-    Router::inherit_state().route("/keys/map", get(map))
+    Router::new().route("/map", get(map))
 }
 
 async fn map() -> String {

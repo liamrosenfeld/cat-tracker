@@ -9,13 +9,13 @@ use time::{Duration, OffsetDateTime};
 use crate::{auth::AuthUser, errors::Error};
 
 pub fn routes() -> Router<PgPool> {
-    Router::inherit_state()
-        .route("/reports/new", post(new))
-        .route("/reports/recent", get(recent))
-        .route("/reports/:id", get(full_by_id))
-        .route("/reports/:id", put(update))
-        .route("/reports/:id", delete(remove))
-        .route("/reports/:id/spot", post(spot))
+    Router::new()
+        .route("/new", post(new))
+        .route("/recent", get(recent))
+        .route("/:id", get(full_by_id))
+        .route("/:id", put(update))
+        .route("/:id", delete(remove))
+        .route("/:id/spot", post(spot))
 }
 
 /* ----------------------------------- new ---------------------------------- */

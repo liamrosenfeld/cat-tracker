@@ -24,8 +24,9 @@ async fn main() {
         .init();
 
     // migrate database
+    let db = db::connect().await;
     sqlx::migrate!("./migrations")
-        .run(&db::connect().await)
+        .run(&db)
         .await
         .expect("Could not run server migrations");
 
@@ -33,7 +34,8 @@ async fn main() {
     let app = Router::new()
         .nest("/api", routes::routes().await)
         .fallback_service(frontend::service())
-        .layer(TraceLayer::new_for_http());
+        .layer(TraceLayer::new_for_http())
+        .with_state(db);
 
     // get address dependant on if running locally or in docker
     #[cfg(debug_assertions)]
