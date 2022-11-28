@@ -9,12 +9,13 @@ use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation}
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
+use utoipa::ToSchema;
 
 use crate::errors::Error;
 
 /* -------------------------------- response -------------------------------- */
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, ToSchema)]
 pub struct AuthBody {
     access_token: String,
     token_type: String,

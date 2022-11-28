@@ -8,13 +8,26 @@
     "method": "POST",
     "sortNum": 10000,
     "created": "2022-10-19T00:56:39.772Z",
-    "modified": "2022-10-23T22:22:24.656Z",
+    "modified": "2022-11-28T19:14:30.390Z",
     "headers": [],
     "params": [],
     "body": {
-      "type": "json",
-      "raw": "{\n    \"email\": \"liam@ufl.edu\",\n    \"username\": \"liam\",\n    \"password\": \"password\"\n}",
-      "form": []
+      "type": "formencoded",
+      "raw": "",
+      "form": [
+        {
+          "name": "email",
+          "value": "liam@ufl.edu"
+        },
+        {
+          "name": "username",
+          "value": "liam"
+        },
+        {
+          "name": "password",
+          "value": "password"
+        }
+      ]
     },
     "auth": {
       "type": "bearer",
@@ -31,13 +44,22 @@
     "method": "POST",
     "sortNum": 20000,
     "created": "2022-10-19T00:59:21.162Z",
-    "modified": "2022-10-23T22:22:30.625Z",
+    "modified": "2022-11-28T22:22:19.329Z",
     "headers": [],
     "params": [],
     "body": {
-      "type": "json",
-      "raw": "{\n    \"email\": \"liam@ufl.edu\",\n    \"password\": \"password\"\n}",
-      "form": []
+      "type": "formencoded",
+      "raw": "",
+      "form": [
+        {
+          "name": "email",
+          "value": "liam@ufl.edu"
+        },
+        {
+          "name": "password",
+          "value": "password"
+        }
+      ]
     },
     "tests": []
   },
@@ -50,17 +72,34 @@
     "method": "POST",
     "sortNum": 10000,
     "created": "2022-10-21T01:24:18.234Z",
-    "modified": "2022-11-06T22:29:24.693Z",
+    "modified": "2022-11-28T19:19:54.511Z",
     "headers": [],
     "params": [],
     "body": {
-      "type": "json",
-      "raw": "{\n  \"loc_x\": 29.64768457131988,\n  \"loc_y\": -82.350184950971,\n  \"cat_name\": \"tenders\",\n  \"notes\": \"outside gator corner front door\"\n}",
-      "form": []
+      "type": "formencoded",
+      "raw": "",
+      "form": [
+        {
+          "name": "loc_x",
+          "value": "29.64768457131988"
+        },
+        {
+          "name": "loc_y",
+          "value": "-82.350184950971"
+        },
+        {
+          "name": "cat_name",
+          "value": "tenders"
+        },
+        {
+          "name": "notes",
+          "value": "outside gator corner front door"
+        }
+      ]
     },
     "auth": {
       "type": "bearer",
-      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2Njk1ODgxMzh9.6QM3hX9qsZxzlmsfjPhN0WGp3h6MDO4ROIk_5wkT-34"
+      "bearer": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NzE0Nzc1MTZ9.qKUbyGpNQjlAkNqVNZb-8LXIoFwsPKhhgzXgpBJRCPI"
     },
     "tests": []
   },
@@ -111,9 +150,26 @@
     "headers": [],
     "params": [],
     "body": {
-      "type": "json",
-      "raw": "{\n  \"loc_x\": 29.64768457131988,\n  \"loc_y\": -82.350184950971,\n  \"cat_name\": \"updated tenders\",\n  \"notes\": \"outside gator corner front door\"\n}",
-      "form": []
+      "type": "formencoded",
+      "raw": "",
+      "form": [
+        {
+          "name": "loc_x",
+          "value": "29.64768457131988"
+        },
+        {
+          "name": "loc_y",
+          "value": "-82.350184950971"
+        },
+        {
+          "name": "cat_name",
+          "value": "tenders"
+        },
+        {
+          "name": "notes",
+          "value": "outside gator corner front door"
+        }
+      ]
     },
     "auth": {
       "type": "bearer",

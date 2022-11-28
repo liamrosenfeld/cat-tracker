@@ -1,9 +1,9 @@
 use axum::Router;
 use sqlx::PgPool;
 
-mod accounts;
-mod keys;
-mod reports;
+pub mod accounts;
+pub mod keys;
+pub mod reports;
 
 pub async fn routes() -> Router<PgPool> {
     // uses merge until the inherit state supports nesting

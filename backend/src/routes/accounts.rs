@@ -2,8 +2,10 @@ use argon2::{
     password_hash::{PasswordHash, SaltString},
     Argon2, PasswordHasher, PasswordVerifier,
 };
-use axum::{extract::State, routing::post, Json, Router};
+use axum::{extract::State, routing::post, Form, Json, Router};
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+use utoipa::ToSchema;
 
 use crate::auth::AuthBody;
 use crate::errors::Error;
@@ -15,17 +17,28 @@ pub fn routes() -> Router<PgPool> {
 }
 
 /* ----------------------------------- new ---------------------------------- */
-
-#[derive(serde::Deserialize)]
-struct NewAccount {
+#[derive(Serialize, Deserialize, ToSchema)]
+pub struct NewAccount {
+    #[schema(example = "example@ufl.edu")]
     email: String,
+    #[schema(example = "John Appleseed")]
     username: String,
+    #[schema(example = "hunter2")]
     password: String,
 }
 
-async fn new(
+#[utoipa::path(
+    post,
+    path = "/api/accounts/new",
+    request_body(content=NewAccount, content_type="application/x-www-form-urlencoded"),
+    responses(
+        (status = 200, description = "Create account and return JWT", body = AuthBody),
+        (status = 409, description = "Email already taken")
+    )
+)]
+pub async fn new(
     State(db): State<PgPool>,
-    Json(req): Json<NewAccount>,
+    Form(req): Form<NewAccount>,
 ) -> Result<Json<AuthBody>, Error> {
     let pw_hash = hash_password(req.password).await?;
 
@@ -44,19 +57,35 @@ async fn new(
 
 /* ---------------------------------- login --------------------------------- */
 
-#[derive(serde::Deserialize)]
-struct Login {
+#[derive(Deserialize, ToSchema)]
+pub struct Login {
+    #[schema(example = "example@ufl.edu")]
     email: String,
+    #[schema(example = "hunter2")]
     password: String,
 }
 
-async fn login(State(db): State<PgPool>, Json(req): Json<Login>) -> Result<Json<AuthBody>, Error> {
+#[utoipa::path(
+    post,
+    path = "/api/accounts/login",
+    request_body(content=Login, content_type="application/x-www-form-urlencoded"),
+    responses(
+        (status = 200, description = "JWT for account", body = AuthBody),
+        (status = 401, description = "Invalid credentials"),
+    )
+)]
+pub async fn login(
+    State(db): State<PgPool>,
+    Form(req): Form<Login>,
+) -> Result<Json<AuthBody>, Error> {
     let user = sqlx::query!(
         "SELECT id, pw_hash FROM account WHERE email = $1",
         req.email
     )
     .fetch_one(&db)
-    .await?;
+    .await
+    .map_err(|_| Error::Unauthorized)?; // do not tell when email was valid
+
     verify_password(req.password, user.pw_hash).await?;
 
     Ok(Json(AuthBody::for_id(user.id)?))

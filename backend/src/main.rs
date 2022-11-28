@@ -6,14 +6,21 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod auth;
 mod db;
+mod docs;
 mod errors;
 mod frontend;
 mod routes;
+
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 #[tokio::main]
 async fn main() {
     // load .env into enviroment variables
     dotenv().ok();
+
+    // better panic handling
+    color_eyre::install().ok();
 
     // setup tracing
     tracing_subscriber::registry()
@@ -32,6 +39,7 @@ async fn main() {
 
     // routing
     let app = Router::new()
+        .merge(SwaggerUi::new("/api/docs").url("/api-doc/openapi.json", docs::ApiDoc::openapi()))
         .nest("/api", routes::routes().await)
         .fallback_service(frontend::service())
         .layer(TraceLayer::new_for_http())
