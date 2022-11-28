@@ -1,10 +1,12 @@
 use axum::{
     extract::{Path, Query, State},
     routing::{delete, get, post, put},
-    Json, Router,
+    Form, Json, Router,
 };
+use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use time::{Duration, OffsetDateTime};
+use utoipa::{IntoParams, ToSchema};
 
 use crate::{auth::AuthUser, errors::Error};
 
@@ -20,18 +22,31 @@ pub fn routes() -> Router<PgPool> {
 
 /* ----------------------------------- new ---------------------------------- */
 
-#[derive(serde::Deserialize)]
-struct NewReport {
+#[derive(Deserialize, ToSchema)]
+pub struct NewReport {
+    #[schema(example = 29.6)]
     loc_x: f64,
+    #[schema(example = -82.35)]
     loc_y: f64,
+    #[schema(example = "tenders")]
     cat_name: String,
+    #[schema(example = "outside gator corner front door")]
     notes: String,
 }
 
-async fn new(
+#[utoipa::path(
+    post,
+    path = "/api/reports/new",
+    request_body(content=NewReport, content_type="application/x-www-form-urlencoded"),
+    responses(
+        (status = 200, description = "Create report and return ID", body = String)
+    ),
+    security(("jwt" = []))
+)]
+pub async fn new(
     auth: AuthUser,
     State(db): State<PgPool>,
-    Json(req): Json<NewReport>,
+    Form(req): Form<NewReport>,
 ) -> Result<String, Error> {
     let created_by = auth.user_id;
     let created_at = OffsetDateTime::now_utc();
@@ -56,18 +71,26 @@ async fn new(
 
 /* --------------------------------- recent --------------------------------- */
 
-#[derive(serde::Deserialize)]
-struct RecentQuery {
+#[derive(Deserialize, IntoParams, ToSchema)]
+pub struct RecentQuery {
     hours_back: i32,
 }
 
-#[derive(serde::Serialize)]
-struct ReportLocation {
+#[derive(Serialize, IntoParams, ToSchema)]
+pub struct ReportLocation {
     id: i32,
     loc_x: f64,
     loc_y: f64,
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/reports/recent",
+    params(RecentQuery),
+    responses(
+        (status = 200, description = "Reports the number of hours back", body = [ReportLocation])
+    ),
+)]
 async fn recent(
     State(db): State<PgPool>,
     Query(params): Query<RecentQuery>,
@@ -86,19 +109,37 @@ async fn recent(
 
 /* -------------------------------- get full -------------------------------- */
 
-#[derive(serde::Serialize)]
-struct Report {
+#[derive(Serialize, ToSchema)]
+pub struct Report {
     id: i32,
     loc_x: f64,
     loc_y: f64,
     created_by: String,
+    #[serde(with = "time::serde::rfc3339")]
     created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
     last_seen: OffsetDateTime,
     cat_name: String,
     notes: String,
 }
 
-async fn full_by_id(State(db): State<PgPool>, Path(id): Path<i32>) -> Result<Json<Report>, Error> {
+#[derive(Deserialize, ToSchema, IntoParams)]
+#[into_params(names("id"))]
+pub struct ReportID(i32);
+
+#[utoipa::path(
+    get,
+    path = "/api/reports/{id}",
+    params(ReportID),
+    responses(
+        (status = 200, description = "Full information for a single report", body = Report),
+        (status = 404, description = "No report with ID"),
+    ),
+)]
+pub async fn full_by_id(
+    State(db): State<PgPool>,
+    Path(id): Path<ReportID>,
+) -> Result<Json<Report>, Error> {
     // join with accounts to replace the raw user ID with the username
     // if profile pictures/karma is added, we could project with those too
     let locs = sqlx::query_as!(
@@ -106,7 +147,7 @@ async fn full_by_id(State(db): State<PgPool>, Path(id): Path<i32>) -> Result<Jso
         r#"SELECT report.id, loc_x, loc_y, username created_by, created_at, last_seen, cat_name, notes
         FROM report JOIN account ON report.created_by=account.id
         WHERE report.id = $1"#,
-        id
+        id.0
     )
     .fetch_one(&db)
     .await?;
@@ -115,14 +156,26 @@ async fn full_by_id(State(db): State<PgPool>, Path(id): Path<i32>) -> Result<Jso
 
 /* --------------------------------- update --------------------------------- */
 
-async fn update(
+#[utoipa::path(
+    put,
+    path = "/api/reports/{id}",
+    params(ReportID),
+    request_body(content=NewReport, content_type="application/x-www-form-urlencoded"),
+    responses(
+        (status = 200, description = "Report was updated"),
+        (status = 403, description = "Current user not creator of report"),
+        (status = 404, description = "No report with ID"),
+    ),
+    security(("jwt" = []))
+)]
+pub async fn update(
     auth: AuthUser,
     State(db): State<PgPool>,
-    Path(id): Path<i32>,
-    Json(req): Json<NewReport>,
+    Path(id): Path<ReportID>,
+    Form(req): Form<NewReport>,
 ) -> Result<(), Error> {
     // ensure is updating own report
-    let author_id = sqlx::query!("SELECT created_by FROM report WHERE id = $1", id)
+    let author_id = sqlx::query!("SELECT created_by FROM report WHERE id = $1", id.0)
         .fetch_one(&db)
         .await?
         .created_by;
@@ -138,7 +191,7 @@ async fn update(
         req.loc_y,
         req.cat_name,
         req.notes,
-        id
+        id.0
     )
     .execute(&db)
     .await?;
@@ -146,13 +199,24 @@ async fn update(
     Ok(())
 }
 
-async fn remove(
+#[utoipa::path(
+    delete,
+    path = "/api/reports/{id}",
+    params(ReportID),
+    responses(
+        (status = 200, description = "Report was deleted"),
+        (status = 403, description = "Current user not creator of report"),
+        (status = 404, description = "No report with ID"),
+    ),
+    security(("jwt" = []))
+)]
+pub async fn remove(
     auth: AuthUser,
     State(db): State<PgPool>,
-    Path(id): Path<i32>,
+    Path(id): Path<ReportID>,
 ) -> Result<(), Error> {
     // ensure is deleting own report
-    let author_id = sqlx::query!("SELECT created_by FROM report WHERE id = $1", id)
+    let author_id = sqlx::query!("SELECT created_by FROM report WHERE id = $1", id.0)
         .fetch_one(&db)
         .await?
         .created_by;
@@ -162,19 +226,33 @@ async fn remove(
     }
 
     // delete
-    sqlx::query!("DELETE FROM report WHERE id = $1", id)
+    sqlx::query!("DELETE FROM report WHERE id = $1", id.0)
         .execute(&db)
         .await?;
 
     Ok(())
 }
 
-async fn spot(_auth: AuthUser, State(db): State<PgPool>, Path(id): Path<i32>) -> Result<(), Error> {
+#[utoipa::path(
+    post,
+    path = "/api/reports/{id}/spot",
+    params(ReportID),
+    responses(
+        (status = 200, description = "Report last seen was updated"),
+        (status = 404, description = "No report with ID"),
+    ),
+    security(("jwt" = []))
+)]
+pub async fn spot(
+    _auth: AuthUser,
+    State(db): State<PgPool>,
+    Path(id): Path<ReportID>,
+) -> Result<(), Error> {
     // the returning id is so it gives a 404 error if not found
     sqlx::query!(
         "UPDATE report SET last_seen=$1 WHERE id = $2 RETURNING id",
         OffsetDateTime::now_utc(),
-        id
+        id.0
     )
     .fetch_one(&db)
     .await?;

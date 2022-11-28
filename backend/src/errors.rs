@@ -30,6 +30,7 @@ pub enum Error {
     #[error("{0}")]
     BadRequest(&'static str),
 
+    /// Return `500 Internal Server Error`
     #[error("{0}")]
     Internal(String),
 
