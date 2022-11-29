@@ -6,19 +6,18 @@ A web application to crowd-source the location of UF campus cats so more people 
 
 ### Frontend
 
-(all must be run in the `frontend` directory)
-
-1. `npm install`
-2. Build
-   - Production: `npm run build`
-   - Development: `npm start`
-     - Note: will not connect to backend
+1. Start the backend (instructions below)
+2. Move to `frontend` directory
+3. `npm install`
+4. Build
+   - Development: `npm start` (access through provided dev server)
+   - Production: `npm run build` (access through the backend)
 
 ### Backend
 
 1. Create the `.env` file in `backend/`
-2. Run `npm run build` in the `frontend` directory
-3. Run `cargo run` in the `backend` backend
+2. Setup database (instructions below)
+3. Run `cargo run` in `backend/`
 
 ### Database
 
@@ -26,11 +25,12 @@ A web application to crowd-source the location of UF campus cats so more people 
 2. Install SQLx CLI `cargo install sqlx-cli`
 3. Add `DATABASE_URL` to `.env`
 4. Create database `sqlx database create`
+5. Run migrations `sqlx migrate run`
 
 ## Docker Development
 
 1. [Install Docker](https://docs.docker.com/get-docker/)
-2. Create `.env` with everything except `DATABASE_URL`
+2. Create `.env` with everything except `DATABASE_URL` in `/`
 3. Run: `docker compose up`
 
 ## Environment Variables
@@ -49,6 +49,8 @@ A web application to crowd-source the location of UF campus cats so more people 
 - `RUST_LOG` (optional)
   - How much you want the backend to log
   - `backend=LEVEL,tower_http=LEVEL`
+- `SQLX_OFFLINE` (optional)
+  - Skip checking if sqlx queries match the running database when compiling
 
 ### Location
 
