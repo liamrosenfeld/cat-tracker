@@ -6,9 +6,10 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use time::{Duration, OffsetDateTime};
-use utoipa::{IntoParams, ToSchema};
+use utoipa::{IntoParams, OpenApi, ToSchema};
 
-use crate::{auth::AuthUser, errors::Error};
+use crate::auth::{AuthUser, JWTDocAddon};
+use crate::errors::Error;
 
 pub fn routes() -> Router<PgPool> {
     Router::new()
@@ -20,10 +21,32 @@ pub fn routes() -> Router<PgPool> {
         .route("/:id/spot", post(spot))
 }
 
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        new,
+        recent,
+        full_by_id,
+        update,
+        remove,
+        spot,
+    ),
+    components(
+        schemas(
+            NewReport,
+            RecentQuery,
+            ReportLocation,
+            Report,
+        )
+    ),
+    modifiers(&JWTDocAddon)
+)]
+pub struct Docs;
+
 /* ----------------------------------- new ---------------------------------- */
 
 #[derive(Deserialize, ToSchema)]
-pub struct NewReport {
+struct NewReport {
     #[schema(example = 29.6)]
     loc_x: f64,
     #[schema(example = -82.35)]
@@ -43,7 +66,7 @@ pub struct NewReport {
     ),
     security(("jwt" = []))
 )]
-pub async fn new(
+async fn new(
     auth: AuthUser,
     State(db): State<PgPool>,
     Form(req): Form<NewReport>,
@@ -72,12 +95,12 @@ pub async fn new(
 /* --------------------------------- recent --------------------------------- */
 
 #[derive(Deserialize, IntoParams, ToSchema)]
-pub struct RecentQuery {
+struct RecentQuery {
     hours_back: i32,
 }
 
 #[derive(Serialize, IntoParams, ToSchema)]
-pub struct ReportLocation {
+struct ReportLocation {
     id: i32,
     loc_x: f64,
     loc_y: f64,
@@ -110,7 +133,7 @@ async fn recent(
 /* -------------------------------- get full -------------------------------- */
 
 #[derive(Serialize, ToSchema)]
-pub struct Report {
+struct Report {
     id: i32,
     loc_x: f64,
     loc_y: f64,
@@ -125,7 +148,7 @@ pub struct Report {
 
 #[derive(Deserialize, ToSchema, IntoParams)]
 #[into_params(names("id"))]
-pub struct ReportID(i32);
+struct ReportID(i32);
 
 #[utoipa::path(
     get,
@@ -136,7 +159,7 @@ pub struct ReportID(i32);
         (status = 404, description = "No report with ID"),
     ),
 )]
-pub async fn full_by_id(
+async fn full_by_id(
     State(db): State<PgPool>,
     Path(id): Path<ReportID>,
 ) -> Result<Json<Report>, Error> {
@@ -168,7 +191,7 @@ pub async fn full_by_id(
     ),
     security(("jwt" = []))
 )]
-pub async fn update(
+async fn update(
     auth: AuthUser,
     State(db): State<PgPool>,
     Path(id): Path<ReportID>,
@@ -210,7 +233,7 @@ pub async fn update(
     ),
     security(("jwt" = []))
 )]
-pub async fn remove(
+async fn remove(
     auth: AuthUser,
     State(db): State<PgPool>,
     Path(id): Path<ReportID>,
@@ -243,7 +266,7 @@ pub async fn remove(
     ),
     security(("jwt" = []))
 )]
-pub async fn spot(
+async fn spot(
     _auth: AuthUser,
     State(db): State<PgPool>,
     Path(id): Path<ReportID>,

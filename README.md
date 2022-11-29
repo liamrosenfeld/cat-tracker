@@ -62,3 +62,7 @@ A web application to crowd-source the location of UF campus cats so more people 
 - New Migration: `sqlx migrate add <name>`
 
 Migrations are automatically applied to the database when the backend is run
+
+## OpenAPI Documentation
+
+Run the backend and then view `/api/docs`

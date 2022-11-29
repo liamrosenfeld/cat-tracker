@@ -1,5 +1,5 @@
 # ---- Build the Backend ---- 
-FROM rust:1.64 as backend
+FROM rust:1.65 as backend
 
 WORKDIR /backend
 COPY backend .
