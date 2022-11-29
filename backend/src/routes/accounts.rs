@@ -5,9 +5,9 @@ use argon2::{
 use axum::{extract::State, routing::post, Form, Json, Router};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use utoipa::ToSchema;
+use utoipa::{OpenApi, ToSchema};
 
-use crate::auth::AuthBody;
+use crate::auth::{AuthBody, JWTDocAddon};
 use crate::errors::Error;
 
 pub fn routes() -> Router<PgPool> {
@@ -16,9 +16,26 @@ pub fn routes() -> Router<PgPool> {
         .route("/login", post(login))
 }
 
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        new,
+        login,
+    ),
+    components(
+        schemas(
+            NewAccount,
+            Login,
+            AuthBody,
+        )
+    ),
+    modifiers(&JWTDocAddon)
+)]
+pub struct Docs;
+
 /* ----------------------------------- new ---------------------------------- */
 #[derive(Serialize, Deserialize, ToSchema)]
-pub struct NewAccount {
+struct NewAccount {
     #[schema(example = "example@ufl.edu")]
     email: String,
     #[schema(example = "John Appleseed")]
@@ -36,7 +53,7 @@ pub struct NewAccount {
         (status = 409, description = "Email already taken")
     )
 )]
-pub async fn new(
+async fn new(
     State(db): State<PgPool>,
     Form(req): Form<NewAccount>,
 ) -> Result<Json<AuthBody>, Error> {
@@ -58,7 +75,7 @@ pub async fn new(
 /* ---------------------------------- login --------------------------------- */
 
 #[derive(Deserialize, ToSchema)]
-pub struct Login {
+struct Login {
     #[schema(example = "example@ufl.edu")]
     email: String,
     #[schema(example = "hunter2")]
@@ -74,10 +91,7 @@ pub struct Login {
         (status = 401, description = "Invalid credentials"),
     )
 )]
-pub async fn login(
-    State(db): State<PgPool>,
-    Form(req): Form<Login>,
-) -> Result<Json<AuthBody>, Error> {
+async fn login(State(db): State<PgPool>, Form(req): Form<Login>) -> Result<Json<AuthBody>, Error> {
     let user = sqlx::query!(
         "SELECT id, pw_hash FROM account WHERE email = $1",
         req.email
