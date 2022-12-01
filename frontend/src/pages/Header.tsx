@@ -125,7 +125,7 @@ export function HeaderTabs ( { user, tabs }: HeaderTabsProps )
   const [ userMenuOpened, setUserMenuOpened ] = useState( false );
   const [ navMenuOpened, setNavMenuOpened ] = useState( false );
   var urlRoute = 'sds';
-  const items = tabs.map( ( tab ) => (
+  const items = tabs.map( ( tab ) => ( (
     urlRoute = '/' + tab.toLowerCase(),
     <Link className={ classes.link } to={ urlRoute }>
       <Tabs.Tab value={ tab } key={ tab }>
@@ -133,9 +133,9 @@ export function HeaderTabs ( { user, tabs }: HeaderTabsProps )
       </Tabs.Tab>
     </Link>
 
-  ) );
+  ) ) );
 
-  const items2 = tabs.map( ( tab ) => (
+  const items2 = tabs.map( ( tab ) => ( (
     urlRoute = '/' + tab.toLowerCase(),
     <Link className={ cx( classes.link, classes.fat ) } to={ urlRoute }>
       <Menu.Item value={ tab } key={ tab }>
@@ -143,7 +143,7 @@ export function HeaderTabs ( { user, tabs }: HeaderTabsProps )
       </Menu.Item>
     </Link>
 
-  ) );
+  ) ) );
   return (
     <div className={ classes.header }>
       <Container className={ classes.mainSection }>
