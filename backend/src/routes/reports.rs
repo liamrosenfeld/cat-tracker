@@ -15,6 +15,7 @@ pub fn routes() -> Router<PgPool> {
     Router::new()
         .route("/new", post(new))
         .route("/recent", get(recent))
+        .route("/mine", get(all_mine))
         .route("/:id", get(full_by_id))
         .route("/:id", put(update))
         .route("/:id", delete(remove))
@@ -30,12 +31,14 @@ pub fn routes() -> Router<PgPool> {
         update,
         remove,
         spot,
+        all_mine,
     ),
     components(
         schemas(
             NewReport,
             RecentQuery,
             ReportLocation,
+            ReportAndAuthor,
             Report,
         )
     ),
@@ -111,7 +114,7 @@ struct ReportLocation {
     path = "/api/reports/recent",
     params(RecentQuery),
     responses(
-        (status = 200, description = "Reports the number of hours back", body = [ReportLocation])
+        (status = 200, description = "All reports for the past n hours", body = [ReportLocation])
     ),
 )]
 async fn recent(
@@ -133,7 +136,7 @@ async fn recent(
 /* -------------------------------- get full -------------------------------- */
 
 #[derive(Serialize, ToSchema)]
-struct Report {
+struct ReportAndAuthor {
     id: i32,
     loc_x: f64,
     loc_y: f64,
@@ -155,24 +158,60 @@ struct ReportID(i32);
     path = "/api/reports/{id}",
     params(ReportID),
     responses(
-        (status = 200, description = "Full information for a single report", body = Report),
+        (status = 200, description = "Full information for a single report and its author", body = Report),
         (status = 404, description = "No report with ID"),
     ),
 )]
 async fn full_by_id(
     State(db): State<PgPool>,
     Path(id): Path<ReportID>,
-) -> Result<Json<Report>, Error> {
+) -> Result<Json<ReportAndAuthor>, Error> {
     // join with accounts to replace the raw user ID with the username
     // if profile pictures/karma is added, we could project with those too
     let locs = sqlx::query_as!(
-        Report,
+        ReportAndAuthor,
         r#"SELECT report.id, loc_x, loc_y, username created_by, created_at, last_seen, cat_name, notes
         FROM report JOIN account ON report.created_by=account.id
         WHERE report.id = $1"#,
         id.0
     )
     .fetch_one(&db)
+    .await?;
+    Ok(Json(locs))
+}
+
+/* ------------------------------- all of mine ------------------------------ */
+
+#[derive(Serialize, ToSchema)]
+struct Report {
+    id: i32,
+    loc_x: f64,
+    loc_y: f64,
+    #[serde(with = "time::serde::rfc3339")]
+    created_at: OffsetDateTime,
+    #[serde(with = "time::serde::rfc3339")]
+    last_seen: OffsetDateTime,
+    cat_name: String,
+    notes: String,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/reports/mine",
+    responses(
+        (status = 200, description = "All reports made by the current user", body = [Report]),
+    ),
+    security(("jwt" = []))
+)]
+async fn all_mine(auth: AuthUser, State(db): State<PgPool>) -> Result<Json<Vec<Report>>, Error> {
+    let locs = sqlx::query_as!(
+        Report,
+        r#"SELECT report.id, loc_x, loc_y, created_at, last_seen, cat_name, notes
+        FROM report
+        WHERE report.created_by = $1"#,
+        auth.user_id
+    )
+    .fetch_all(&db)
     .await?;
     Ok(Json(locs))
 }

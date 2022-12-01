@@ -1,5 +1,25 @@
 {
   "db": "PostgreSQL",
+  "04ad9a6b13ef795c6288ba8cde2fdf2d0c0e9ca39596c167614b81a01a355061": {
+    "describe": {
+      "columns": [
+        {
+          "name": "pw_hash",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "SELECT pw_hash FROM account WHERE id = $1"
+  },
   "471f473bc721e5c1272d8c74067e269fb7dfecbb5a9b87b723cd5372bf5a84c6": {
     "describe": {
       "columns": [
@@ -26,6 +46,27 @@
     },
     "query": "SELECT id, pw_hash FROM account WHERE email = $1"
   },
+  "4bd1e35a0c362e7fc9b554dc83dc69b1b93adca02e407930df68b0bc48ac87a3": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int4"
+        ]
+      }
+    },
+    "query": "UPDATE account SET pw_hash=$1 WHERE id = $2 RETURNING id"
+  },
   "4e35487533dde132f9e614f28a08bdccb78bb2d9129dd2eb7079b8a74148f0d9": {
     "describe": {
       "columns": [
@@ -51,6 +92,26 @@
       }
     },
     "query": "INSERT INTO report (loc_x, loc_y, created_by, created_at, last_seen, cat_name, notes)\n        VALUES ($1, $2, $3, $4, $5, $6, $7)\n        RETURNING id"
+  },
+  "84b191823c4c8077ea6e76d7677324d981ac87ec33315b9311295f876ad95d85": {
+    "describe": {
+      "columns": [
+        {
+          "name": "username",
+          "ordinal": 0,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "SELECT username FROM account WHERE id = $1"
   },
   "8792c3f5d63514c9523d32c0f9edef8257e216878e2fb6b095c49b0c0ae00698": {
     "describe": {
@@ -130,6 +191,83 @@
       }
     },
     "query": "INSERT INTO account (username, email, pw_hash)\n        VALUES ($1, $2, $3) RETURNING id"
+  },
+  "ae4b5664d4cc1b6f61ada74c6af76969e6b37aad7104a38135f1a943221763f1": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        },
+        {
+          "name": "loc_x",
+          "ordinal": 1,
+          "type_info": "Float8"
+        },
+        {
+          "name": "loc_y",
+          "ordinal": 2,
+          "type_info": "Float8"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "last_seen",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "cat_name",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "notes",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "SELECT report.id, loc_x, loc_y, created_at, last_seen, cat_name, notes\n        FROM report\n        WHERE report.created_by = $1"
+  },
+  "b0c4c72903c9ee6f0cbef56449d97bf15340fc047c4a445f90f9e476d53ffa34": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int4"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int4"
+        ]
+      }
+    },
+    "query": "UPDATE account SET username=$1 WHERE id = $2 RETURNING id"
   },
   "b6fe8ade4b76a680ffcaae592c23a0dbb76986a898312d69fd6c6773a658f878": {
     "describe": {

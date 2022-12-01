@@ -2,18 +2,25 @@ use argon2::{
     password_hash::{PasswordHash, SaltString},
     Argon2, PasswordHasher, PasswordVerifier,
 };
-use axum::{extract::State, routing::post, Form, Json, Router};
+use axum::{
+    extract::State,
+    routing::{get, post, put},
+    Form, Json, Router,
+};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use utoipa::{OpenApi, ToSchema};
 
-use crate::auth::{AuthBody, JWTDocAddon};
+use crate::auth::{AuthBody, AuthUser, JWTDocAddon};
 use crate::errors::Error;
 
 pub fn routes() -> Router<PgPool> {
     Router::new()
         .route("/new", post(new))
         .route("/login", post(login))
+        .route("/myself", get(myself))
+        .route("/edit/username", put(edit_username))
+        .route("/edit/password", put(edit_password))
 }
 
 #[derive(OpenApi)]
@@ -21,12 +28,18 @@ pub fn routes() -> Router<PgPool> {
     paths(
         new,
         login,
+        myself,
+        edit_username,
+        edit_password,
     ),
     components(
         schemas(
             NewAccount,
             Login,
             AuthBody,
+            UserProfile,
+            UsernameEdit,
+            PasswordEdit,
         )
     ),
     modifiers(&JWTDocAddon)
@@ -103,6 +116,102 @@ async fn login(State(db): State<PgPool>, Form(req): Form<Login>) -> Result<Json<
     verify_password(req.password, user.pw_hash).await?;
 
     Ok(Json(AuthBody::for_id(user.id)?))
+}
+
+/* --------------------------------- access --------------------------------- */
+#[derive(Serialize, ToSchema)]
+struct UserProfile {
+    username: String,
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/accounts/myself",
+    responses(
+        (status = 200, description = "Profile for account", body = UserProfile),
+    ),
+    security(("jwt" = []))
+)]
+async fn myself(auth: AuthUser, State(db): State<PgPool>) -> Result<Json<UserProfile>, Error> {
+    let username = sqlx::query!("SELECT username FROM account WHERE id = $1", auth.user_id)
+        .fetch_one(&db)
+        .await?
+        .username;
+
+    Ok(Json(UserProfile { username }))
+}
+
+/* --------------------------------- editing -------------------------------- */
+
+#[derive(Deserialize, ToSchema)]
+struct UsernameEdit {
+    username: String,
+}
+
+#[utoipa::path(
+    put,
+    path = "/api/accounts/edit/username",
+    request_body(content=UsernameEdit, content_type="application/x-www-form-urlencoded"),
+    responses(
+        (status = 200, description = "Edit successful"),
+    ),
+    security(("jwt" = []))
+)]
+async fn edit_username(
+    auth: AuthUser,
+    State(db): State<PgPool>,
+    Form(new): Form<UsernameEdit>,
+) -> Result<(), Error> {
+    sqlx::query!(
+        "UPDATE account SET username=$1 WHERE id = $2 RETURNING id",
+        new.username,
+        auth.user_id
+    )
+    .fetch_one(&db)
+    .await?;
+
+    Ok(())
+}
+
+#[derive(Deserialize, ToSchema)]
+struct PasswordEdit {
+    old: String,
+    new: String,
+}
+
+#[utoipa::path(
+    put,
+    path = "/api/accounts/edit/password",
+    request_body(content=PasswordEdit, content_type="application/x-www-form-urlencoded"),
+    responses(
+        (status = 200, description = "Edit successful"),
+        (status = 401, description = "Not logged in or old password incorrect")
+    ),
+    security(("jwt" = []))
+)]
+async fn edit_password(
+    auth: AuthUser,
+    State(db): State<PgPool>,
+    Form(passwords): Form<PasswordEdit>,
+) -> Result<(), Error> {
+    // validate the old password is correct
+    let old_hash = sqlx::query!("SELECT pw_hash FROM account WHERE id = $1", auth.user_id)
+        .fetch_one(&db)
+        .await?
+        .pw_hash;
+    verify_password(passwords.old, old_hash).await?;
+
+    // update the password
+    let new_hash = hash_password(passwords.new).await?;
+    sqlx::query!(
+        "UPDATE account SET pw_hash=$1 WHERE id = $2 RETURNING id",
+        new_hash,
+        auth.user_id
+    )
+    .fetch_one(&db)
+    .await?;
+
+    Ok(())
 }
 
 /* --------------------------------- hashing -------------------------------- */
