@@ -13,7 +13,7 @@ import mapStylesheet from './mapStylesheet';
 export const mapContainerStyle =
 {
   width: '100%',
-  height: '100vh'
+  height: '85vh',
 };
 
 // GNV coordinates

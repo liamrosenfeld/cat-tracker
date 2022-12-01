@@ -11,18 +11,19 @@ import Map from './pages/Map/Map';
 import './index.css';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById( 'root' ) as HTMLElement
 );
 
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />\
-          <Route path="map" element={<Map />} />
-          <Route path="other" element={<Other />} />
-          <Route path="*" element={<NoPage />} />
+        <Route path="/" element={ <Layout /> }>
+          <Route index element={ <Home /> } />
+          <Route path="home" element={ <Home /> } />
+          <Route path="map" element={ <Map /> } />
+          <Route path="other" element={ <Other /> } />
+          <Route path="*" element={ <NoPage /> } />
         </Route>
       </Routes>
     </BrowserRouter>
