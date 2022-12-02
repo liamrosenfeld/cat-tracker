@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Other from './pages/Other';
 import NoPage from './pages/NoPage';
 import Map from './pages/Map/Map';
+import UserAuth from './pages/UserAuth';
 
 import './index.css';
 
@@ -23,6 +24,7 @@ root.render(
           <Route path="home" element={ <Home /> } />
           <Route path="map" element={ <Map /> } />
           <Route path="other" element={ <Other /> } />
+          <Route path="UserAuth" element={ <UserAuth /> } />
           <Route path="*" element={ <NoPage /> } />
         </Route>
       </Routes>
