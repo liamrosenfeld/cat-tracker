@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 
 export function AuthenticationForm(props: PaperProps) {
-  const [type, toggle] = useToggle(['login', 'register']);
+  const [type, toggle] = useToggle(['Login', 'Register']);
   const form = useForm({
     initialValues: {
       email: '',
@@ -33,13 +33,15 @@ export function AuthenticationForm(props: PaperProps) {
   return (
     <Paper radius="md" p="xl" withBorder {...props}>
       <Text size="lg" weight={500}>
-        Welcome to CatTracker, {type} with
+        Welcome to CatTracker!
       </Text>
-
+      <Text size="lg" weight={500}>
+        {type} with:
+      </Text>
 
       <Divider labelPosition="center" my="lg" />
 
-      <form onSubmit={form.onSubmit(() => {})}>
+      <form onSubmit={form.onSubmit(() => { })}>
         <Stack>
           {type === 'register' && (
             <TextInput
