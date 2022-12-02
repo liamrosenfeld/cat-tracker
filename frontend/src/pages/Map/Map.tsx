@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { mapContainerStyle, center, zoom, options } from './settings';
-import MapHeader from './MapHeader';
 import ReportMarker, { ReportMarkerType } from './Markers';
+import { createStyles } from '@mantine/core';
+
+const useStyles = createStyles( ( theme ) => ( {
+
+  wrapper: {
+    maxWidth: '100%',
+    maxHeight: '100vh',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  }
+} ) );
 
 const Map: React.FC = () =>
 {
@@ -20,7 +31,7 @@ const Map: React.FC = () =>
     getKey();
   }, [] );
 
-  return key !== undefined ? <div><MapHeader /><MapChild apiKey={ key } /></div> : <div> Map Loading...</div>;
+  return key !== undefined ? <div style={ { margin: 0 } }><MapChild apiKey={ key } /></div> : <div> Map Loading...</div>;
 };
 
 const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
@@ -48,6 +59,7 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
 
   // store data in a React Hook
   const [ points ] = useState<Array<ReportMarkerType>>( tmpMarkers );
+  const { classes } = useStyles();
 
   /******************************************/
 
@@ -68,20 +80,23 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
     };
 
     return (
-      <GoogleMap
-        mapContainerStyle={ mapContainerStyle }
-        options={ options as google.maps.MapOptions }
-        center={ center }
-        zoom={ zoom }
-        onLoad={ onLoad }
-      >
-        {
-          points?.map( point =>
-          (
-            <ReportMarker ReportMarkerStruct={ point } />
-          ) )
-        }
-      </GoogleMap>
+      <div className={ classes.wrapper }>
+        <GoogleMap
+          mapContainerStyle={ mapContainerStyle }
+          options={ options as google.maps.MapOptions }
+          center={ center }
+          zoom={ zoom }
+          onLoad={ onLoad }
+        >
+          {
+            points?.map( point =>
+            (
+              <ReportMarker ReportMarkerStruct={ point } />
+            ) )
+          }
+        </GoogleMap>
+
+      </div>
     );
   };
 
