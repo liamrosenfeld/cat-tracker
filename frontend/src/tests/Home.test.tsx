@@ -9,6 +9,6 @@ test('example home test', () => {
       <Home />
     </MemoryRouter>
   );
-  const linkElement = screen.getByText(/This is the home page/i);
+  const linkElement = screen.getByText(/TEMP HOME PAGE/i);
   expect(linkElement).toBeInTheDocument();
 });
