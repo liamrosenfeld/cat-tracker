@@ -1,0 +1,10 @@
+layout {
+  pane split_direction="vertical" {
+    pane cwd="./backend" command="cargo" {
+      args "run"
+    }
+    pane cwd="./frontend" command="npm" {
+      args "start"
+    }
+  }
+}
