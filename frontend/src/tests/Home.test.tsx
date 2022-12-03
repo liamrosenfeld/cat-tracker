@@ -1,14 +1,19 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import Home from '../pages/Home';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import Layout from '../pages/Layout';
+import Map from '../pages/Map/Map';
 
-test('example home test', () => {
+test('header of map', () => {
   render(
     <MemoryRouter>
-      <Home />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Map />} />
+        </Route>
+      </Routes>
     </MemoryRouter>
   );
-  const linkElement = screen.getByText(/TEMP HOME PAGE/i);
+  const linkElement = screen.getByText(/UF Cat Tracker/i);
   expect(linkElement).toBeInTheDocument();
 });
