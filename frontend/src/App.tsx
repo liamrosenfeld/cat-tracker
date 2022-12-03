@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Layout from './pages/Layout';
-import Home from './pages/Home';
-import Other from './pages/Other';
 import NoPage from './pages/NoPage';
 import Map from './pages/Map/Map';
 import Register from './pages/Auth/Register';
@@ -33,10 +31,7 @@ export function App() {
         <ProfileContext.Provider value={{ get: profile, set: setProfile }}>
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="home" element={<Home />} />
-              <Route path="map" element={<Map />} />
-              <Route path="other" element={<Other />} />
+              <Route index element={<Map />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="*" element={<NoPage />} />
