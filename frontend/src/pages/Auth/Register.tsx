@@ -5,17 +5,34 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
   Button,
-  Divider,
+  Space,
   Anchor,
   Stack,
   Center,
+  Alert
 } from '@mantine/core';
-import { IconAt, IconKey, IconUser } from '@tabler/icons';
+import { IconAt, IconKey, IconUser, IconAlertCircle } from '@tabler/icons';
 import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { ProfileContext, populateProfile } from "../../profile";
 
-export function Register(props: PaperProps) {
+interface RegisterForm {
+  username: string,
+  email: string,
+  password: string
+}
+
+export function Register() {
+  const navigate = useNavigate();
+
+  // don't allow logged in user to view
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/")
+    }
+  })
+
   const form = useForm({
     initialValues: {
       username: '',
@@ -29,25 +46,49 @@ export function Register(props: PaperProps) {
     },
   });
 
-  const navigate = useNavigate();
+  const [submitError, setSubmitError] = useState<string>("");
+  let setProfile = useContext(ProfileContext).set;
+
+  async function submit(form: RegisterForm) {
+    const data = new URLSearchParams({ ...form });
+    let response = await fetch("/api/accounts/new", {
+      method: "POST",
+      body: data
+    })
+
+    switch (response.status) {
+      case 200:
+        let token = (await response.json())["access_token"];
+        localStorage.setItem("token", token);
+        await populateProfile(setProfile);
+        navigate("/");
+        break;
+      case 409:
+        setSubmitError("Email Already Taken")
+        break;
+      case 500:
+        setSubmitError("Internal Server Error")
+        break;
+    }
+  }
 
   return (
     <Center>
-      <Paper radius="md" p="xl" withBorder {...props}>
+      <Paper radius="md" p="xl" withBorder>
         <Text size="lg" weight={500}>
           Welcome! Register:
         </Text>
 
-        <Divider labelPosition="center" my="lg" />
+        <Space h="sm" />
 
-        <form onSubmit={form.onSubmit(() => { })}>
+        <form onSubmit={form.onSubmit(submit)}>
           <Stack>
             <TextInput
               required
               label="Username"
               placeholder="public username"
               value={form.values.username}
-              icon={<IconUser />}
+              icon={<IconUser stroke="1.75" />}
               onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
             />
 
@@ -56,7 +97,7 @@ export function Register(props: PaperProps) {
               label="UF Email"
               placeholder="email@ufl.edu"
               value={form.values.email}
-              icon={<IconAt />}
+              icon={<IconAt stroke="1.75" />}
               onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
               error={form.errors.email}
             />
@@ -66,7 +107,7 @@ export function Register(props: PaperProps) {
               label="Password"
               placeholder="password"
               value={form.values.password}
-              icon={<IconKey />}
+              icon={<IconKey stroke="1.75" />}
               onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
               error={form.errors.password}
             />
@@ -85,8 +126,23 @@ export function Register(props: PaperProps) {
             <Button type="submit">Register</Button>
           </Group>
         </form>
+
+        {submitError !== "" &&
+          <>
+            <Space h="md" />
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              color="orange"
+              radius="md"
+              withCloseButton onClose={() => setSubmitError("")}
+            >
+              {submitError}
+            </Alert>
+          </>
+        }
+
       </Paper>
-    </Center>
+    </Center >
   );
 }
 

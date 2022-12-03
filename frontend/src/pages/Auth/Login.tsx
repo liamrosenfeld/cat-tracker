@@ -6,16 +6,32 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
   Button,
-  Divider,
   Anchor,
   Stack,
-  Center
+  Center,
+  Space,
+  Alert
 } from '@mantine/core';
-import { IconAt, IconKey } from '@tabler/icons';
+import { IconAlertCircle, IconAt, IconKey } from '@tabler/icons';
+import { useContext, useEffect, useState } from 'react';
+import { populateProfile, ProfileContext } from '../../profile';
 
-export function Login(props: PaperProps) {
+interface LoginForm {
+  email: string,
+  password: string,
+}
+
+export function Login() {
+  const navigate = useNavigate();
+
+  // don't allow logged in user to view
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/")
+    }
+  })
+
   const form = useForm({
     initialValues: {
       email: '',
@@ -23,25 +39,49 @@ export function Login(props: PaperProps) {
     },
   });
 
-  const navigate = useNavigate();
+  const [submitError, setSubmitError] = useState<string>("");
+  let setProfile = useContext(ProfileContext).set;
+
+  async function submit(form: LoginForm) {
+    const data = new URLSearchParams({ ...form });
+    let response = await fetch("/api/accounts/login", {
+      method: "POST",
+      body: data
+    })
+
+    switch (response.status) {
+      case 200:
+        let token = (await response.json())["access_token"];
+        localStorage.setItem("token", token);
+        await populateProfile(setProfile);
+        navigate("/");
+        break;
+      case 401:
+        setSubmitError("Invalid login")
+        break;
+      case 500:
+        setSubmitError("Internal Server Error")
+        break;
+    }
+  }
 
   return (
     <Center>
-      <Paper radius="md" p="xl" withBorder {...props}>
+      <Paper radius="md" p="xl" withBorder>
         <Text size="lg" weight={500}>
           Welcome Back! Login:
         </Text>
 
-        <Divider labelPosition="center" my="lg" />
+        <Space h="sm" />
 
-        <form onSubmit={form.onSubmit(() => { })}>
+        <form onSubmit={form.onSubmit(submit)}>
           <Stack>
             <TextInput
               required
               label="UF Email"
               placeholder="email@ufl.edu"
               value={form.values.email}
-              icon={<IconAt />}
+              icon={<IconAt stroke="1.75" />}
               onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
             />
 
@@ -50,7 +90,7 @@ export function Login(props: PaperProps) {
               label="Password"
               placeholder="password"
               value={form.values.password}
-              icon={<IconKey />}
+              icon={<IconKey stroke="1.75" />}
               onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
             />
           </Stack>
@@ -67,6 +107,20 @@ export function Login(props: PaperProps) {
             <Button type="submit">Login</Button>
           </Group>
         </form>
+
+        {submitError !== "" &&
+          <>
+            <Space h="md" />
+            <Alert
+              icon={<IconAlertCircle size={16} />}
+              color="orange"
+              radius="md"
+              withCloseButton onClose={() => setSubmitError("")}
+            >
+              {submitError}
+            </Alert>
+          </>
+        }
       </Paper>
     </Center>
   );
