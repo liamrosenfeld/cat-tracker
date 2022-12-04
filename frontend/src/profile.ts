@@ -1,38 +1,48 @@
 import React from "react";
 
-export interface ProfileInfo {
+// base interface for the Profile
+export interface ProfileInfo
+{
   name: string,
   image: string,
 }
-export type ProfileSetter = (_: ProfileInfo | null) => void;
 
+// Setter for the Profile
+// accepts a Profile 'struct'
+export type ProfileSetter = ( _: ProfileInfo | null ) => void;
+
+// wraps Profile with simple [get] and [set] methods
 export const ProfileContext = React.createContext<{
-  get: ProfileInfo | null, set: ProfileSetter
-}>({ get: null, set: (_) => { } });
+  get: ProfileInfo | null, set: ProfileSetter;
+}>( { get: null, set: ( _ ) => { } } );
 
-export async function populateProfile(setProfile: ProfileSetter) {
-  let token = localStorage.getItem("token");
-  if (token == null) { return }
+// Sets a profile identified by it's ProfileSetter using a localStorage JWT
+// accepts a ProfileSetter setter
+export async function populateProfile ( setProfile: ProfileSetter )
+{
+  let token = localStorage.getItem( "token" );
+  if ( token == null ) { return; }
 
-  let response = await fetch("/api/accounts/myself", {
-    headers: new Headers({
+  let response = await fetch( "/api/accounts/myself", {
+    headers: new Headers( {
       "Authorization": "Bearer " + token,
-    })
-  });
+    } )
+  } );
 
-  switch (response.status) {
+  switch ( response.status )
+  {
     case 200:
       let profile = await response.json();
-      setProfile({
-        name: profile["username"] as string,
+      setProfile( {
+        name: profile[ "username" ] as string,
         image: "/images/logo.svg"
-      })
+      } );
       break;
     case 401:
       // jwt is not valid -> logout
-      localStorage.removeItem("token");
+      localStorage.removeItem( "token" );
       break;
     default:
-      console.error("unexpected error getting myself: " + response.statusText)
+      console.error( "unexpected error getting myself: " + response.statusText );
   }
 }
