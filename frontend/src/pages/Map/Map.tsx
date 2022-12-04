@@ -40,7 +40,7 @@ const Map: React.FC = () =>
   }, [] );
 
   // don't load the map until we have obtained the API key
-  return ( key !== undefined ) && key != "" ? <div style={ { margin: 0 } }><MapChild apiKey={ key } /></div> :
+  return ( key !== undefined ) && key !== "" ? <div style={ { margin: 0 } }><MapChild apiKey={ key } /></div> :
     <LoadingOverlay
       loaderProps={ { size: 'xl', color: 'black', variant: 'bars' } }
       overlayOpacity={ 0 }
@@ -53,9 +53,9 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
 {
 
   /**********TEMPORARY MARKER DATA***********/
-
-  var baseLat = 29.639;
-  var baseLng = -82.360;
+  // gainesville coordinates
+  // var baseLat = 29.639;
+  // var baseLng = -82.360;
 
   // attempt to grab data from API and store in rawPoints
   const [ rawPoints, setRawPoints ] = useState( [] );
