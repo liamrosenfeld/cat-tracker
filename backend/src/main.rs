@@ -1,6 +1,6 @@
 use axum::{Router, Server};
 use dotenv::dotenv;
-use std::net::SocketAddr;
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -41,13 +41,21 @@ async fn main() {
         .layer(TraceLayer::new_for_http())
         .with_state(db);
 
-    // get address dependant on if running locally or in docker
-    #[cfg(debug_assertions)]
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
-    #[cfg(not(debug_assertions))]
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    // get ip dependant on if running locally or in docker
+    let ip = if cfg!(debug_assertions) {
+        IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))
+    } else {
+        IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0))
+    };
+
+    // get port env (for heroku docker support)
+    let port = std::env::var("PORT")
+        .unwrap_or("8000".to_string())
+        .parse::<u16>()
+        .unwrap();
 
     // run it
+    let addr = SocketAddr::new(ip, port);
     println!("listening on {}", &addr);
     Server::bind(&addr)
         .serve(app.into_make_service())
