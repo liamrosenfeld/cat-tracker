@@ -14,8 +14,8 @@ export type ReportMarkerType = {
   location: google.maps.LatLngLiteral;
 };
 
-// onClick event handler
-const onClickReportMarker = ( marker: ReportMarkerType ) => console.log( "clicked" ); // this needs to be chagned to bring up details about the report
+// onClick event handler for when a marker is clicked
+const onClickReportMarker = ( marker: ReportMarkerType ) => console.log( "clicked" ); // this needs to be changed to bring up details about the report
 
 // React FC for rendering Markers from a Marker Struct
 const ReportMarker: React.FC<{ ReportMarkerStruct: ReportMarkerType; }> = props =>

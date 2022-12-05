@@ -1,10 +1,15 @@
+/*
+  Actual implementation of the map
+  Markers are grabbed from the backend and rendered onto a google maps API
+*/
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { mapContainerStyle, center, zoom, options } from './settings';
 import ReportMarker, { ReportMarkerType } from './Markers';
-import { createStyles } from '@mantine/core';
+import { createStyles, LoadingOverlay } from '@mantine/core';
 
-const useStyles = createStyles((theme) => ({
+// stylesheet attempt for removing scroll bar overflow
+const useStyles = createStyles( ( theme ) => ( {
 
   wrapper: {
     maxWidth: '100%',
@@ -12,80 +17,123 @@ const useStyles = createStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    padding: 'none',
+    margin: 'none',
   }
-}));
+} ) );
 
-const Map: React.FC = () => {
+// render the map if the API key is available
+const Map: React.FC = () =>
+{
   // get api key
-  const [key, setKey] = useState<string>();
-  useEffect(() => {
-    async function getKey() {
-      const response = await fetch('/api/keys/map');
+  const [ key, setKey ] = useState<string>();
+  useEffect( () =>
+  {
+    async function getKey ()
+    {
+      const response = await fetch( '/api/keys/map' );
       const key = await response.text();
-      setKey(key);
+      setKey( key );
     }
 
     getKey();
-  }, []);
+  }, [] );
 
-  return key !== undefined ? <div style={{ margin: 0 }}><MapChild apiKey={key} /></div> : <div> Map Loading...</div>;
+  // don't load the map until we have obtained the API key
+  return ( key !== undefined ) && key !== "" ? <div style={ { margin: 0 } }><MapChild apiKey={ key } /></div> :
+    <LoadingOverlay
+      loaderProps={ { size: 'xl', color: 'black', variant: 'bars' } }
+      overlayOpacity={ 0 }
+      overlayColor="#c5c5c5"
+      visible
+    />;
 };
 
-const MapChild: React.FC<{ apiKey: string; }> = (props) => {
+const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
+{
 
   /**********TEMPORARY MARKER DATA***********/
+  // gainesville coordinates
+  // var baseLat = 29.639;
+  // var baseLng = -82.360;
 
-  var baseLat = 29.639;
-  var baseLng = -82.360;
+  // attempt to grab data from API and store in rawPoints
+  const [ rawPoints, setRawPoints ] = useState( [] );
+  const [ points, setPoints ] = useState<Array<ReportMarkerType>>();
+  const [ mapLoaded, setMapLoaded ] = useState( false );
+  useEffect( () =>
+  {
+    async function loadMap () 
+    {
+      let response = await fetch( "/api/reports/recent?hours_back=100" );
 
-  // generate the data || grab data from API
-  var tmpMarkers: Array<ReportMarkerType> = new Array<ReportMarkerType>();
-  for (var i = 0; i < 10; i++) {
-    var tmpLatLng: google.maps.LatLngLiteral = {
-      lat: (baseLat + (0.001 * i)),
-      lng: (baseLng + (0.003 * i))
-    };
-    var tmpReportMarker: ReportMarkerType = {
-      id: String(i),
-      location: tmpLatLng
-    };
-    tmpMarkers.push(tmpReportMarker);
-  }
+      // store the response in rawPoints
+      const data = await response.json();
+      setRawPoints( data );
+    }
+    if ( !mapLoaded )
+    {
+      loadMap();
+      setMapLoaded( true );
+    }
 
-  // store data in a React Hook
-  const [points] = useState<Array<ReportMarkerType>>(tmpMarkers);
-  const { classes } = useStyles();
+  }, [ mapLoaded ] );
+
+  // waits until rawPoints is fully set before converting the generic rawPoints to Strictly type Points
+  useEffect( () =>
+  {
+    var tmpMarkers: Array<ReportMarkerType> = new Array<ReportMarkerType>();
+
+    for ( var i = 0; i < rawPoints.length; i++ )
+    {
+      var tmpLatLng: google.maps.LatLngLiteral = {
+        lat: rawPoints[ i ][ 'loc_x' ],
+        lng: rawPoints[ i ][ 'loc_y' ],
+      };
+      var tmpReportMarker: ReportMarkerType = {
+        id: rawPoints[ i ][ 'id' ],
+        location: tmpLatLng,
+      };
+      tmpMarkers.push( tmpReportMarker );
+    }
+
+    setPoints( tmpMarkers );
+  }, [ rawPoints ] );
 
   /******************************************/
+
+  const { classes } = useStyles();
 
   /*************MAP RENDERING****************/
 
   // load the map
   const { isLoaded, loadError } = useJsApiLoader
-    ({
+    ( {
       id: 'google-map-ide',
       googleMapsApiKey: props.apiKey
-    });
+    } );
 
-  const renderMap = () => {
-    const onLoad = (_map: google.maps.Map): void => {
-      console.log("map loaded");
+  const renderMap = () =>
+  {
+    const onLoad = ( _map: google.maps.Map ): void =>
+    {
+      console.log( "map loaded" );
     };
 
     return (
-      <div className={classes.wrapper}>
+      <div className={ classes.wrapper }>
         <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          options={options as google.maps.MapOptions}
-          center={center}
-          zoom={zoom}
-          onLoad={onLoad}
+          mapContainerStyle={ mapContainerStyle }
+          options={ options as google.maps.MapOptions }
+          center={ center }
+          zoom={ zoom }
+          onLoad={ onLoad }
         >
           {
-            points?.map(point =>
+            points?.map( point =>
             (
-              <ReportMarker ReportMarkerStruct={point} key={point.id} />
-            ))
+              <ReportMarker ReportMarkerStruct={ point } key={ point.id } />
+            ) )
           }
         </GoogleMap>
 
@@ -93,7 +141,8 @@ const MapChild: React.FC<{ apiKey: string; }> = (props) => {
     );
   };
 
-  if (loadError) {
+  if ( loadError )
+  {
     return <div>Map cannot be loaded right now, sorry.</div>;
   }
 
