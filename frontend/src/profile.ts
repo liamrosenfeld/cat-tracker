@@ -2,6 +2,7 @@ import React from "react";
 
 export interface ProfileInfo {
   name: string,
+  email: string,
   image: string,
 }
 export type ProfileSetter = (_: ProfileInfo | null) => void;
@@ -25,6 +26,7 @@ export async function populateProfile(setProfile: ProfileSetter) {
       let profile = await response.json();
       setProfile({
         name: profile["username"] as string,
+        email: profile["email"] as string,
         image: "/images/logo.svg"
       })
       break;

@@ -4,7 +4,7 @@ use argon2::{
 };
 use axum::{
     extract::State,
-    routing::{get, post, put},
+    routing::{get, patch, post},
     Form, Json, Router,
 };
 use serde::{Deserialize, Serialize};
@@ -19,8 +19,8 @@ pub fn routes() -> Router<PgPool> {
         .route("/new", post(new))
         .route("/login", post(login))
         .route("/myself", get(myself))
-        .route("/edit/username", put(edit_username))
-        .route("/edit/password", put(edit_password))
+        .route("/edit/username", patch(edit_username))
+        .route("/edit/password", patch(edit_password))
 }
 
 #[derive(OpenApi)]
@@ -122,6 +122,7 @@ async fn login(State(db): State<PgPool>, Form(req): Form<Login>) -> Result<Json<
 #[derive(Serialize, ToSchema)]
 struct UserProfile {
     username: String,
+    email: String,
 }
 
 #[utoipa::path(
@@ -133,12 +134,15 @@ struct UserProfile {
     security(("jwt" = []))
 )]
 async fn myself(auth: AuthUser, State(db): State<PgPool>) -> Result<Json<UserProfile>, Error> {
-    let username = sqlx::query!("SELECT username FROM account WHERE id = $1", auth.user_id)
-        .fetch_one(&db)
-        .await?
-        .username;
+    let profile = sqlx::query_as!(
+        UserProfile,
+        "SELECT username, email FROM account WHERE id = $1",
+        auth.user_id
+    )
+    .fetch_one(&db)
+    .await?;
 
-    Ok(Json(UserProfile { username }))
+    Ok(Json(profile))
 }
 
 /* --------------------------------- editing -------------------------------- */
@@ -149,7 +153,7 @@ struct UsernameEdit {
 }
 
 #[utoipa::path(
-    put,
+    patch,
     path = "/api/accounts/edit/username",
     request_body(content=UsernameEdit, content_type="application/x-www-form-urlencoded"),
     responses(
@@ -180,7 +184,7 @@ struct PasswordEdit {
 }
 
 #[utoipa::path(
-    put,
+    patch,
     path = "/api/accounts/edit/password",
     request_body(content=PasswordEdit, content_type="application/x-www-form-urlencoded"),
     responses(

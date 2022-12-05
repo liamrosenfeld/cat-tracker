@@ -23,7 +23,6 @@ function UserMenu({ profile, setProfile }: { profile: ProfileInfo, setProfile: P
 
   function logout() {
     localStorage.removeItem("token");
-    console.log(setProfile);
     setProfile(null);
     navigate("/login");
   }
@@ -54,7 +53,7 @@ function UserMenu({ profile, setProfile }: { profile: ProfileInfo, setProfile: P
       <Menu.Dropdown>
         <Menu.Item
           icon={<IconMessage size="14" stroke="1.5" />}
-          onClick={() => navigate("/account/settings")}
+          onClick={() => navigate("/account/reports")}
         >Your Reports</Menu.Item>
 
         <Menu.Item
