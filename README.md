@@ -51,6 +51,8 @@ A web application to crowd-source the location of UF campus cats so more people 
   - `backend=LEVEL,tower_http=LEVEL`
 - `SQLX_OFFLINE` (optional)
   - Skip checking if sqlx queries match the running database when compiling
+- `PORT` (optional local, required docker)
+  - The port to run the backend on
 
 ### Location
 

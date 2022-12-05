@@ -20,5 +20,5 @@ FROM debian:buster-slim as run
 COPY --from=backend /backend/target/release/backend /usr/local/bin/backend
 COPY --from=frontend /frontend/build/ /static
 
-EXPOSE 8000
+EXPOSE ${PORT}
 CMD backend
