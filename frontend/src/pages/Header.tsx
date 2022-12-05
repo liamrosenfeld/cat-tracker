@@ -26,12 +26,10 @@ function UserMenu ( { profile, setProfile }: { profile: ProfileInfo, setProfile:
   let navigate = useNavigate();
 
   // Removes profile information, local JWT, and send to login page
-  function logout ()
-  {
-    localStorage.removeItem( "token" );
-    console.log( setProfile );
-    setProfile( null );
-    navigate( "/login" );
+  function logout() {
+    localStorage.removeItem("token");
+    setProfile(null);
+    navigate("/login");
   }
 
   return (
@@ -66,7 +64,7 @@ function UserMenu ( { profile, setProfile }: { profile: ProfileInfo, setProfile:
       <Menu.Dropdown>
         <Menu.Item
           icon={ <IconMessage size="14" stroke="1.5" /> }
-          onClick={ () => navigate( "/account/settings" ) }
+          onClick={ () => navigate( "/account/reports" ) }
         >Your Reports</Menu.Item>
 
         <Menu.Item

@@ -6,6 +6,7 @@ import NoPage from './pages/NoPage';
 import Map from './pages/Map/Map';
 import Register from './pages/Auth/Register';
 import Login from './pages/Auth/Login';
+import AccountSettings from './pages/Account/AccountSettings';
 
 import './index.css';
 import { ProfileInfo, ProfileContext, populateProfile } from './profile';
@@ -34,6 +35,7 @@ export function App() {
               <Route index element={<Map />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
+              <Route path="account/settings" element={<AccountSettings />} />
               <Route path="*" element={<NoPage />} />
             </Route>
           </Routes>

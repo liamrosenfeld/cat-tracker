@@ -4,6 +4,7 @@ import React from "react";
 export interface ProfileInfo
 {
   name: string,
+  email: string,
   image: string,
 }
 
@@ -33,8 +34,9 @@ export async function populateProfile ( setProfile: ProfileSetter )
   {
     case 200:
       let profile = await response.json();
-      setProfile( {
-        name: profile[ "username" ] as string,
+      setProfile({
+        name: profile["username"] as string,
+        email: profile["email"] as string,
         image: "/images/logo.svg"
       } );
       break;

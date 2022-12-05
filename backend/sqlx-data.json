@@ -93,26 +93,6 @@
     },
     "query": "INSERT INTO report (loc_x, loc_y, created_by, created_at, last_seen, cat_name, notes)\n        VALUES ($1, $2, $3, $4, $5, $6, $7)\n        RETURNING id"
   },
-  "84b191823c4c8077ea6e76d7677324d981ac87ec33315b9311295f876ad95d85": {
-    "describe": {
-      "columns": [
-        {
-          "name": "username",
-          "ordinal": 0,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int4"
-        ]
-      }
-    },
-    "query": "SELECT username FROM account WHERE id = $1"
-  },
   "8792c3f5d63514c9523d32c0f9edef8257e216878e2fb6b095c49b0c0ae00698": {
     "describe": {
       "columns": [
@@ -330,6 +310,32 @@
       }
     },
     "query": "SELECT report.id, loc_x, loc_y, username created_by, created_at, last_seen, cat_name, notes\n        FROM report JOIN account ON report.created_by=account.id\n        WHERE report.id = $1"
+  },
+  "b7047692572873f81f5840dff5e23fecf52956fba100d90330c506e18fc83750": {
+    "describe": {
+      "columns": [
+        {
+          "name": "username",
+          "ordinal": 0,
+          "type_info": "Text"
+        },
+        {
+          "name": "email",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      }
+    },
+    "query": "SELECT username, email FROM account WHERE id = $1"
   },
   "cca0c76adac4dec9bc6cca864c615c201a33856557b0d774fba7a7260ff5ade6": {
     "describe": {
