@@ -66,8 +66,14 @@ const ReportMarker: React.FC<{ ReportMarkerStruct: ReportMarkerType; }> = props 
 
   const OnClickReportMarker = () =>
   {
-    setSwitchToInfo( true );
-    console.log( switchToInfo );
+    if ( switchToInfo )
+    {
+      setSwitchToInfo( false );
+    }
+    else
+    {
+      setSwitchToInfo( true );
+    }
   };
 
   // onClick event handler for when a Report window is closed
