@@ -7,6 +7,7 @@ import
   Menu,
   Button,
   MediaQuery,
+  Header,
 } from "@mantine/core";
 import
 {
@@ -26,10 +27,11 @@ function UserMenu ( { profile, setProfile }: { profile: ProfileInfo, setProfile:
   let navigate = useNavigate();
 
   // Removes profile information, local JWT, and send to login page
-  function logout() {
-    localStorage.removeItem("token");
-    setProfile(null);
-    navigate("/login");
+  function logout ()
+  {
+    localStorage.removeItem( "token" );
+    setProfile( null );
+    navigate( "/login" );
   }
 
   return (
@@ -88,25 +90,28 @@ export function HeaderTabs ()
   let navigate = useNavigate();
 
   return (
-    <Container p="sm">
-      <Group position="apart">
-        {/*Website Banner*/ }
-        <Group onClick={ () => navigate( "/" ) }>
-          <IconPaw size={ 28 } />
-          <Text>UF Cat Tracker</Text>
+    <Header height={ { base: 60 } }>
+      <Container p="sm">
+        <Group position="apart">
+          {/*Website Banner*/ }
+          <Group onClick={ () => navigate( "/" ) }>
+            <IconPaw size={ 28 } />
+            <Text>UF Cat Tracker</Text>
+          </Group>
+
+          {/*Right Side Menu*/ }
+          {/*only if profile exists and is loaded*/ }
+          { profile.get != null ?
+            <UserMenu profile={ profile.get } setProfile={ profile.set } />
+            :
+            <Button onClick={ () => navigate( "/login" ) }>
+              Log In
+            </Button>
+          }
+
         </Group>
+      </Container>
+    </Header>
 
-        {/*Right Side Menu*/ }
-        {/*only if profile exists and is loaded*/ }
-        { profile.get != null ?
-          <UserMenu profile={ profile.get } setProfile={ profile.set } />
-          :
-          <Button onClick={ () => navigate( "/login" ) }>
-            Log In
-          </Button>
-        }
-
-      </Group>
-    </Container>
   );
 }

@@ -13,7 +13,6 @@ const useStyles = createStyles( ( theme ) => ( {
 
   wrapper: {
     maxWidth: '100%',
-    maxHeight: '100vh',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
