@@ -16,6 +16,12 @@ export const mapContainerStyle =
   height: '90vh'
 };
 
+export const mapContainerStyleMini =
+{
+  width: '100%',
+  height: '20vh'
+};
+
 // GNV coordinates
 export const center =
 {
@@ -32,4 +38,11 @@ export const options =
   styles: mapStylesheet,
   disableDefaultUI: true,
   zoomControl: true
+};
+
+export const miniOptions =
+{
+  styles: mapStylesheet,
+  disableDefaultUI: true,
+  zoomControl: false,
 };
