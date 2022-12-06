@@ -17,5 +17,7 @@
     },
     "[sql]": {
         "editor.formatOnSave": false
-    }
+    },
+    "typescript.format.semicolons": "insert",
+    "typescript.preferences.quoteStyle": "double"
 }
