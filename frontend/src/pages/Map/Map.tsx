@@ -2,23 +2,30 @@
   Actual implementation of the map
   Markers are grabbed from the backend and rendered onto a google maps API
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { mapContainerStyle, center, zoom, options } from './settings';
 import ReportMarker, { ReportMarkerType } from './Markers';
-import { createStyles, LoadingOverlay } from '@mantine/core';
+import { createStyles, LoadingOverlay, Slider, Stack } from '@mantine/core';
 
 // stylesheet attempt for removing scroll bar overflow
 const useStyles = createStyles( ( theme ) => ( {
 
   wrapper: {
+    display: 'flex',
     maxWidth: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
     padding: 'none',
     margin: 'none',
-  }
+  },
+  slider:
+  {
+    width: '75%',
+    minWidth: '75%',
+    position: 'absolute',
+    bottom: '80px',
+  },
 } ) );
 
 // render the map if the API key is available
@@ -50,8 +57,32 @@ const Map: React.FC = () =>
 
 const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
 {
+  const sliderRef = useRef<HTMLDivElement>( null );
+  var hoursBack = 11;
 
-  /**********TEMPORARY MARKER DATA***********/
+  // fetch data from the api
+  const fetchData = () =>
+  {
+    fetch( "/api/reports/recent?hours_back=" + hoursBack )
+      .then( ( response ) => response.json() )
+      .then( ( response ) =>
+      {
+        setRawPoints( response );
+      } )
+      .catch( () =>
+      {
+        console.log( 'error' );
+      } );
+  };
+
+  // update the hours back and resend api
+  const onUpdate = () =>
+  {
+    hoursBack = Number( sliderRef.current?.lastElementChild?.attributes[ 1 ].value );
+    fetchData();
+  };
+
+  /**********GETTING MARKER DATA***********/
   // gainesville coordinates
   // var baseLat = 29.639;
   // var baseLng = -82.360;
@@ -59,24 +90,7 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
   // attempt to grab data from API and store in rawPoints
   const [ rawPoints, setRawPoints ] = useState( [] );
   const [ points, setPoints ] = useState<Array<ReportMarkerType>>();
-  const [ mapLoaded, setMapLoaded ] = useState( false );
-  useEffect( () =>
-  {
-    async function loadMap () 
-    {
-      let response = await fetch( "/api/reports/recent?hours_back=100" );
-
-      // store the response in rawPoints
-      const data = await response.json();
-      setRawPoints( data );
-    }
-    if ( !mapLoaded )
-    {
-      loadMap();
-      setMapLoaded( true );
-    }
-
-  }, [ mapLoaded ] );
+  const { classes } = useStyles();
 
   // waits until rawPoints is fully set before converting the generic rawPoints to Strictly type Points
   useEffect( () =>
@@ -101,7 +115,6 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
 
   /******************************************/
 
-  const { classes } = useStyles();
 
   /*************MAP RENDERING****************/
 
@@ -117,10 +130,18 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
     const onLoad = ( _map: google.maps.Map ): void =>
     {
       console.log( "map loaded" );
+      fetchData();
     };
 
+    const marks = [
+      { value: 11, label: '24 hours' },
+      { value: 35, label: '10 days' },
+      { value: 60, label: '1 month' },
+      { value: 85, label: '2 months' },
+    ];
+
     return (
-      <div className={ classes.wrapper }>
+      <Stack className={ classes.wrapper }>
         <GoogleMap
           mapContainerStyle={ mapContainerStyle }
           options={ options as google.maps.MapOptions }
@@ -135,8 +156,47 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
             ) )
           }
         </GoogleMap>
-
-      </div>
+        <Slider className={ classes.slider }
+          color="blue"
+          defaultValue={ 11 }
+          marks={ marks }
+          labelTransition="fade"
+          size={ 4 }
+          ref={ sliderRef }
+          onChangeEnd={ onUpdate }
+          styles={ ( theme ) => ( {
+            track: {
+              boxShadow: '5px 5px 7px black',
+              backgroundColor:
+                theme.colorScheme === 'dark' ? theme.colors.dark[ 3 ] : theme.colors.red,
+            },
+            mark: {
+              width: 10,
+              height: 10,
+              borderRadius: 6,
+              transform: 'translateX(-3px) translateY(-2px)',
+              borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[ 3 ] : theme.colors.blue[ 1 ],
+            },
+            markFilled: {
+              borderColor: theme.colors.blue[ 6 ],
+            },
+            markLabel: {
+              fontSize: theme.fontSizes.xs,
+              color: theme.colors.dark[ 4 ],
+              marginBottom: 5,
+              marginTop: 3,
+            },
+            thumb: {
+              height: 20,
+              width: 20,
+              backgroundColor: theme.white,
+              borderWidth: 1,
+              boxShadow: theme.shadows.sm,
+            },
+          } ) }
+          scale={ ( v ) => Math.round( ( v ** 2 ) / 5 ) }
+        />
+      </Stack>
     );
   };
 
