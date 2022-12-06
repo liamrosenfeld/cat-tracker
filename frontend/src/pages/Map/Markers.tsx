@@ -1,6 +1,6 @@
 import { MarkerF, InfoWindowF } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
-import { Paper, Text, Divider, Spoiler, Space } from '@mantine/core';
+import { Paper, Text, Divider, Spoiler, Space, ScrollArea } from '@mantine/core';
 
 /*
 NOTE:
@@ -100,6 +100,11 @@ const ReportMarker: React.FC<{ ReportMarkerStruct: ReportMarkerType; }> = props 
         >
           <Paper
             p="xs"
+            style={
+              {
+                width: '240px'
+              }
+            }
           >
             <Spoiler maxHeight={ 170 } showLabel="Show more" hideLabel="Hide">
               <Text size="xl" weight={ 500 }>
@@ -123,11 +128,15 @@ const ReportMarker: React.FC<{ ReportMarkerStruct: ReportMarkerType; }> = props 
               <Text size="sm">
                 Notes:
               </Text>
-              <Text>
-                { ANotes }
-                <Space h="xs" />
-              </Text>
+              <ScrollArea.Autosize maxHeight={ 120 } mx="auto" type="scroll" scrollHideDelay={ 50 }>
+
+                <Text>
+                  { ANotes }
+                  <Space h="xs" />
+                </Text>
+              </ScrollArea.Autosize>
             </Spoiler>
+
           </Paper>
         </InfoWindowF>
       ) }
