@@ -7,6 +7,7 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import { mapContainerStyle, center, zoom, options } from './settings';
 import ReportMarker, { ReportMarkerType } from './Markers';
 import { createStyles, LoadingOverlay, Slider, Stack } from '@mantine/core';
+import ReportsButton from "../Reports/ReportsButton";
 
 // stylesheet attempt for removing scroll bar overflow
 const useStyles = createStyles( ( theme ) => ( {
@@ -55,11 +56,11 @@ const Map: React.FC = () =>
     />;
 };
 
+
 const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
 {
   const sliderRef = useRef<HTMLDivElement>( null );
   var hoursBack = 11;
-
   // fetch data from the api
   const fetchData = () =>
   {
@@ -91,6 +92,7 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
   const [ rawPoints, setRawPoints ] = useState( [] );
   const [ points, setPoints ] = useState<Array<ReportMarkerType>>();
   const { classes } = useStyles();
+
 
   // waits until rawPoints is fully set before converting the generic rawPoints to Strictly type Points
   useEffect( () =>
@@ -154,7 +156,9 @@ const MapChild: React.FC<{ apiKey: string; }> = ( props ) =>
             (
               <ReportMarker ReportMarkerStruct={ point } key={ point.id } />
             ) )
+
           }
+          <ReportsButton />
         </GoogleMap>
         <Slider className={ classes.slider }
           color="blue"
