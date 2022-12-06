@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileContext } from "../../profile";
 
-function UsernameEditor({ setError }: { setError: React.Dispatch<React.SetStateAction<string>> }) {
+function UsernameEditor({ setError }: { setError: React.Dispatch<React.SetStateAction<string>>; }) {
   let profile = useContext(ProfileContext);
 
   const [editing, setEditing] = useState(false);
@@ -60,10 +60,10 @@ function UsernameEditor({ setError }: { setError: React.Dispatch<React.SetStateA
         profile.set({ name: input, email: currProfile.email, image: currProfile.image });
         break;
       case 401:
-        setError("Invalid user session")
+        setError("Invalid user session");
         break;
       case 500:
-        setError("Internal Server Error")
+        setError("Internal Server Error");
         break;
     }
   }
@@ -75,20 +75,20 @@ function UsernameEditor({ setError }: { setError: React.Dispatch<React.SetStateA
           required
           placeholder="Username"
           value={input}
-          onChange={(event) => { setInput(event.currentTarget.value) }}
+          onChange={(event) => { setInput(event.currentTarget.value); }}
         />
         <IconCheck onClick={submitNameEdit} />
       </Group>
-    )
+    );
   } else {
     return (<Group noWrap>
       <Text>{profile.get!.name}</Text>
-      <IconPencil onClick={() => { setInput(profile.get!.name); setEditing(true) }} />
-    </Group>)
+      <IconPencil onClick={() => { setInput(profile.get!.name); setEditing(true); }} />
+    </Group>);
   }
 }
 
-function PasswordEditor({ setError }: { setError: React.Dispatch<React.SetStateAction<string>> }) {
+function PasswordEditor({ setError }: { setError: React.Dispatch<React.SetStateAction<string>>; }) {
   const [editing, setEditing] = useState(false);
   const form = useForm({
     initialValues: {
@@ -140,33 +140,33 @@ function PasswordEditor({ setError }: { setError: React.Dispatch<React.SetStateA
             placeholder="Old Password"
             label="Old"
             value={form.values.old}
-            onChange={(event) => { form.setFieldValue("old", event.currentTarget.value) }}
+            onChange={(event) => { form.setFieldValue("old", event.currentTarget.value); }}
           />
           <PasswordInput
             placeholder="New Password"
             label="New"
             value={form.values.new}
-            onChange={(event) => { form.setFieldValue("new", event.currentTarget.value) }}
+            onChange={(event) => { form.setFieldValue("new", event.currentTarget.value); }}
             error={form.errors.new}
           />
           <Group noWrap spacing="xs">
-            <Button onClick={() => { setEditing(false); form.reset() }} color="gray">Cancel</Button>
+            <Button onClick={() => { setEditing(false); form.reset(); }} color="gray">Cancel</Button>
             <Button type="submit">Update</Button>
           </Group>
         </Stack>
       </form >
-    )
+    );
   } else {
-    return <IconPencil onClick={() => { setEditing(true) }} />
+    return <IconPencil onClick={() => { setEditing(true); }} />;
   }
 }
 
 export function AccountSettings() {
   useEffect(() => {
     if (!localStorage.getItem("token")) {
-      navigate("/")
+      navigate("/");
     }
-  })
+  });
 
   let profile = useContext(ProfileContext);
   let navigate = useNavigate();

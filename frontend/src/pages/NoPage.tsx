@@ -1,5 +1,5 @@
 import { Button, Center, Paper, Text, Space } from '@mantine/core';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 function NoPage() {
   const navigate = useNavigate();

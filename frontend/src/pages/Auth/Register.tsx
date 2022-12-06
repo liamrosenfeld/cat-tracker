@@ -20,7 +20,7 @@ import { ProfileContext, populateProfile } from "../../profile";
 interface RegisterForm {
   username: string,
   email: string,
-  password: string
+  password: string;
 }
 
 export function Register() {
@@ -29,9 +29,9 @@ export function Register() {
   // don't allow logged in user to view
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/")
+      navigate("/");
     }
-  })
+  });
 
   const form = useForm({
     initialValues: {
@@ -54,7 +54,7 @@ export function Register() {
     let response = await fetch("/api/accounts/new", {
       method: "POST",
       body: data
-    })
+    });
 
     switch (response.status) {
       case 200:
@@ -64,10 +64,10 @@ export function Register() {
         navigate("/");
         break;
       case 409:
-        setSubmitError("Email Already Taken")
+        setSubmitError("Email Already Taken");
         break;
       case 500:
-        setSubmitError("Internal Server Error")
+        setSubmitError("Internal Server Error");
         break;
     }
   }

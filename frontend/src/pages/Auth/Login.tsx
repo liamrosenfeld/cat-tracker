@@ -28,9 +28,9 @@ export function Login() {
   // don't allow logged in user to view
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      navigate("/")
+      navigate("/");
     }
-  })
+  });
 
   const form = useForm({
     initialValues: {
@@ -47,7 +47,7 @@ export function Login() {
     let response = await fetch("/api/accounts/login", {
       method: "POST",
       body: data
-    })
+    });
 
     switch (response.status) {
       case 200:
@@ -57,10 +57,10 @@ export function Login() {
         navigate("/");
         break;
       case 401:
-        setSubmitError("Invalid login")
+        setSubmitError("Invalid login");
         break;
       case 500:
-        setSubmitError("Internal Server Error")
+        setSubmitError("Internal Server Error");
         break;
     }
   }

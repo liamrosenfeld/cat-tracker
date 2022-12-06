@@ -4,20 +4,19 @@ import { AppShell, MantineProvider, useMantineTheme } from "@mantine/core";
 
 // base layout for the website
 // all over webpages will be overlayed on top
-const Layout = () =>
-{
+const Layout = () => {
   const theme = useMantineTheme();
 
   return (
     <MantineProvider withNormalizeCSS withGlobalStyles>
       <AppShell
-        styles={ {
+        styles={{
           main: {
-            background: theme.colorScheme === 'dark' ? theme.colors.dark[ 8 ] : theme.colors.gray[ 0 ],
+            background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
           },
-        } }
+        }}
         fixed
-        header={ <HeaderTabs /> }
+        header={<HeaderTabs />}
       >
         <Outlet />
       </AppShell >

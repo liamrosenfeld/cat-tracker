@@ -21,10 +21,10 @@ export function App() {
       await populateProfile(setProfile);
     }
     if (!loadedProfile) {
-      loadProfile()
+      loadProfile();
       setloadedProfile(true);
     }
-  }, [loadedProfile])
+  }, [loadedProfile]);
 
   return (
     <React.StrictMode>
@@ -42,5 +42,5 @@ export function App() {
         </ProfileContext.Provider>
       </BrowserRouter>
     </React.StrictMode>
-  )
+  );
 }

@@ -55,7 +55,7 @@ function Map() {
 
 function MapChild(props: { apiKey: string; }) {
   const sliderRef = useRef<HTMLDivElement>(null);
-  var hoursBack = 11;
+  let hoursBack = 11;
   // fetch data from the api
   const fetchData = () => {
     fetch("/api/reports/recent?hours_back=" + hoursBack)
@@ -75,10 +75,6 @@ function MapChild(props: { apiKey: string; }) {
   };
 
   /**********GETTING MARKER DATA***********/
-  // gainesville coordinates
-  // var baseLat = 29.639;
-  // var baseLng = -82.360;
-
   // attempt to grab data from API and store in rawPoints
   const [rawPoints, setRawPoints] = useState([]);
   const [points, setPoints] = useState<Array<ReportMarkerType>>();
@@ -87,15 +83,15 @@ function MapChild(props: { apiKey: string; }) {
 
   // waits until rawPoints is fully set before converting the generic rawPoints to Strictly type Points
   useEffect(() => {
-    var tmpMarkers: Array<ReportMarkerType> = new Array<ReportMarkerType>();
+    let tmpMarkers: Array<ReportMarkerType> = new Array<ReportMarkerType>();
 
-    for (var i = 0; i < rawPoints.length; i++) {
-      var tmpLatLng: google.maps.LatLngLiteral = {
-        lat: rawPoints[i]['loc_x'],
-        lng: rawPoints[i]['loc_y'],
+    for (let point of rawPoints) {
+      let tmpLatLng: google.maps.LatLngLiteral = {
+        lat: point['loc_x'],
+        lng: point['loc_y'],
       };
-      var tmpReportMarker: ReportMarkerType = {
-        id: rawPoints[i]['id'],
+      let tmpReportMarker: ReportMarkerType = {
+        id: point['id'],
         location: tmpLatLng,
       };
       tmpMarkers.push(tmpReportMarker);
@@ -110,11 +106,10 @@ function MapChild(props: { apiKey: string; }) {
   /*************MAP RENDERING****************/
 
   // load the map
-  const { isLoaded, loadError } = useJsApiLoader
-    ({
-      id: 'google-map-ide',
-      googleMapsApiKey: props.apiKey
-    });
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-ide',
+    googleMapsApiKey: props.apiKey
+  });
 
   const renderMap = () => {
     const onLoad = (_map: google.maps.Map): void => {
